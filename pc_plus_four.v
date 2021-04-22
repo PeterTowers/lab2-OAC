@@ -1,4 +1,4 @@
-module pcPlusFour (clk, pc, out);
+module pcPlusFour (clk, out);
 	input      clk;
    input      [31:0] pc;
    output	  [31:0] out;
