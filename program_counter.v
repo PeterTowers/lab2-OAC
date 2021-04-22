@@ -1,13 +1,20 @@
-module programCounter32 (reset, clk, D, Q);
-   input	     reset, clk;
-	input      [31:0] D;
-   output	  [31:0] Q;
-   reg        [31:0] Q;
-    // Register with active-high clock
+module programCounter (
+	input	     clk, branch, alu_zero,
+	input		  [31:0] address,
+	output	  [31:0] out
+	);
+   
+	reg [31:0] pc;
+	assign out = pc;
+	
    always @ (posedge clk)
-      if (reset)
-			Q = 0;
-		else
-			Q = D;
-    
-endmodule	// programCounter32
+	begin
+		pc = pc + 4;
+		
+		if (branch & alu_zero)
+			begin
+				address = address<<2;
+				pc = pc + address;
+			end
+    end
+endmodule	// programCounter
