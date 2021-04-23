@@ -27,12 +27,12 @@ module register_bank(
 				begin
 					registers[write_reg] <= write_data; //Escreve no registrador indifcado por write_reg
 				end
-			else
-				begin // Se não, a gente só lê os registradores
-					//$display("atualiza saidas");
-					out_value1 <= registers[read_reg1];
-					out_value2 <= registers[read_reg2];
-				end
+			//else
+			begin // Se não, a gente só lê os registradores
+				//$display("atualiza saidas");
+				out_value1 <= registers[read_reg1];
+				out_value2 <= registers[read_reg2];
+			end
 		end
 	
 	assign read_data1 = out_value1;
