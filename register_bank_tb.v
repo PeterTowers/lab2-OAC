@@ -66,13 +66,14 @@ module register_bank_tb;
 		clock = 0; #10
 		
 		write_enable = 1'b1;
-		write_reg = 5'd5;
+		write_reg = 5'd5; 
 		write_data = 32'hFADAF0FA;
-		clock = 1; #10
+		#5
+		clock = 1; #5
 		
 		
 		print_pins();
-		test_result(read_data1, 32'd0); // Como o banco está em modo write, ele não atualiza as saídas de leitura
+		//test_result(read_data1, 32'd0); // Modificado.
 		
 		clock = 0; #10	
 		write_enable = 1'b0;	// desligamos o modo write.

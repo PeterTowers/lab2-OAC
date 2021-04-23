@@ -1,51 +1,47 @@
 module control_unit(
-	input[0:6] opcode,
-	output reg_dst,
-	output branch,
-	output read_mem,
-	output mem_para_reg,
-	output opALU,
-	output write_mem,
-	output orig_alu,
-	output write_reg
+	input[0:5] opcode,
+	output reg reg_dst, // escolhe qual o registrador em que será salvo. Se so tem 2 é 0, se temos 3, é 1.
+	output reg branch, // para as funcoes de jump. 1 é jump
+	output reg read_mem,
+	output reg mem_para_reg,
+	output reg[3:0] opALU,
+	output reg write_mem,
+	output reg origALU,
+	output reg write_enable_reg
 	);
 	
-	
-	reg write_reg_out;
-	reg reg_dst_out;
-	reg branch_out;
-	reg read_mem_out;
-	reg mem_para_reg_out;
-	reg opALU_out;
-	reg write_mem_out;
-	reg orig_alu_out;
-	
-	assign write_reg = write_reg_out;
-	assign reg_dst = reg_dst_out;
-	assign branch = branch_out;
-	assign read_mem = read_mem_out;
-	assign mem_para_reg = mem_para_reg_out;
-	assign opALU = opALU_out;
-	assign write_mem = write_mem_out;
-	assign orig_alu = orig_alu_out;
-	
 	initial begin
-		write_reg_out = 1'b0;
-		reg_dst_out = 1'b0;
-		branch_out = 1'b0;
-		read_mem_out = 1'b0;
-		mem_para_reg_out = 1'b0;
-		opALU_out = 1'b0;
-		write_mem_out = 1'b0;
-		orig_alu_out = 1'b0;	
+		write_enable_reg = 1'b0;
+		reg_dst = 1'b0;
+		branch = 1'b0; 
+		read_mem = 1'b0; 
+		mem_para_reg = 1'b0;
+		opALU = 1'b0;
+		write_mem = 1'b0;
+		origALU = 1'b0;	
 	end
 	
 	
 	always @(*)
 	begin
 		case(opcode)
-			6'b100000: 
-				write_reg_out = 1'b1;
+			6'b001000:  //ADDI
+				begin
+					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
+					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
+					opALU <= 4'd1; // Operação Soma.
+					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
+				end
+			6'b001100:  //ANDI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está sinalizada.
+				begin 
+					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
+					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
+					opALU <= 4'd3; // Operação And
+					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
+				end
+			default:
+				write_enable_reg <= 1'd0;
+				
 		endcase
 	end
 	

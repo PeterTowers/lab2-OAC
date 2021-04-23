@@ -3,8 +3,7 @@
 module alu_tb;
 	// Inputs
 	reg [31:0] A, B;
-	reg [5:0] operation;
-	
+	reg [5:0] operation;	
 	wire [31:0] out;
 	
 	alu test_unit(
