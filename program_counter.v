@@ -5,15 +5,15 @@ module program_counter(
 	);
    
 	reg [31:0] pc;
-	assign out = pc;
 	
+	assign out = pc;
+		
 	initial
 	begin
-		pc = 0;
+		pc = -4;
 	end
 	
-   always @(posedge clk)
-	begin
+   always @(*) begin
 		pc = pc + 4;
 		
 		if (branch & alu_zero)
