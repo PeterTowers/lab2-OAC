@@ -3,12 +3,13 @@ module mips_uniciclo(output testout);
 	
 	wire[31:0] instruction; // Sai da memória de instruções e alimenta o controle, o banco de registradores e TODO: Extensão de sinal
 	
-	wire[31:0] reg_bank_data1, reg_bank_data2; // São os valores lidos do banco de registradores
+	
 	wire reg_dst; // Gerado pela unidade de controle, decide qual o registrador para escrita.
 	wire[4:0] reg_dst_write; // Registrador selecionado para escrita
 	wire origALU; // Fio para decidir se a ALU operador B usa Imediato ou registrador
 	wire[3:0] opALU; // Gerado pela unidade de controle, ajuda a decidir a operação da ULA.
 	wire[5:0] ALUoperation; // Escolhe se ULA vai somar, subtrair, etc.
+	wire[31:0] reg_bank_data1, reg_bank_data2; // São os valores lidos do banco de registradores
 	wire[31:0] ALUoperand_b; //O segundo operando da ULA.
 	wire[31:0] ALUresult; //Resultado da ULA
 	wire[31:0] sign_extended_imm; // Imediato com sinal extendido.

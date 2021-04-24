@@ -32,12 +32,33 @@ module control_unit(
 					opALU <= 4'd1; // Operação Soma.
 					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
 				end
-			6'b001100:  //ANDI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está sinalizada.
+			6'b001100:  //ANDI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensão sinalizada.
 				begin 
 					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
 					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
 					opALU <= 4'd3; // Operação And
 					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
+				end
+			6'b001101:  //ORI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensã sinalizada.
+				begin 
+					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
+					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
+					opALU <= 4'd4; // Operação Or
+					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
+				end
+			6'b001110:  //XORI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensã sinalizada.
+				begin 
+					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
+					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
+					opALU <= 4'd5; // Operação xor
+					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
+				end
+			6'b000000:  //Tipo-R
+				begin
+					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
+					reg_dst <= 1'd1; // Temos 3 registradores nesse caso.
+					opALU <= 4'd0; // Operação decidida pelo campo funct.
+					origALU <= 1'd0; // O segundo operando da ULA é o segundo registrador.
 				end
 			default:
 				write_enable_reg <= 1'd0;
