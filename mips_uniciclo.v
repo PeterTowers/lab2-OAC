@@ -13,7 +13,11 @@ module mips_uniciclo(output testout);
 	wire[31:0] ALUoperand_b; //O segundo operando da ULA.
 	wire[31:0] ALUresult; //Resultado da ULA
 	wire[31:0] sign_extended_imm; // Imediato com sinal extendido.
-	wire write_enable_reg; // Se 1, ocorrerá uma escrita no banco de registradores na ubida do clock.
+	wire write_enable_reg; // Se 1, ocorrerá uma escrita no banco de registradores na subida do clock.
+	wire write_enable_mem; // Se 1, ocorrerá uma escrita na memória de dados na subida do clock.
+	wire [31:0] mem_data; // O dado que foi lido na memória.
+	wire mem_to_reg; //Se 1, o dado da memória é enviado para a escrita do banco de registradores.
+	wire [31:0] write_on_bank; // Aquilo que será escrito no banco
 	reg clock;
 	
 	parameter clock_period = 500;	
@@ -43,7 +47,7 @@ module mips_uniciclo(output testout);
 		.read_reg2(instruction[20:16]),
 		.write_reg(reg_dst_write),
 		.write_enable(write_enable_reg),
-		.write_data(ALUresult),
+		.write_data(write_on_bank),
 		.read_data1(reg_bank_data1), 
 		.read_data2(reg_bank_data2)
 	);
@@ -54,24 +58,31 @@ module mips_uniciclo(output testout);
 		.reg_dst(reg_dst),
 		.branch(),
 		.read_mem(),
-		.mem_para_reg(),
+		.mem_to_reg(mem_to_reg),
 		.opALU(opALU),
-		.write_mem(),
+		.write_enable_mem(write_enable_mem),
 		.origALU(origALU),
 		.write_enable_reg(write_enable_reg)
 	);
 	
 	
 	//Memória das instruções
-	inst_memory memoria2(
+	inst_memory memoria_instrucao(
 		.address(pc),
 		.clock(clock),
-		.data(),
+		.data(mem_data),
 		.wren(1'b0),
 		.q(instruction)
 	);
 	
-	
+	//Memória de dados
+	data_memory3 memoria_dados(
+		.address(ALUresult[6:0]),
+		.clock(clock),
+		.data(reg_bank_data2),
+		.wren(write_enable_mem),
+		.q(mem_data)
+	);
 	
 	//Mux para escolher qual vai ser o registrador de escrita.
 	mux1_5bits reg_write_mux(
@@ -81,14 +92,20 @@ module mips_uniciclo(output testout);
 		.out(reg_dst_write)
 	);
 	
-	
-	
 	//Mux para escolher se a ULA recebe em B um imediato ou o se recebe o segundo valor do Banco de Registradores
 	mux1_32bits immediate_reg2_mux(
 		.option_a(reg_bank_data2),
 		.option_b(sign_extended_imm),
 		.selector(origALU),
 		.out(ALUoperand_b)
+	);
+	
+	//Mux pera escolher se o que vai para a escrita do banco de registradores é o resultado da ULA ou o dado da Memória
+	mux1_32bits write_reg_bank_mux(
+		.option_a(ALUresult),
+		.option_b(mem_data),
+		.selector(mem_to_reg),
+		.out(write_on_bank)
 	);
 	
 	//Extensor de Sinal
@@ -101,8 +118,7 @@ module mips_uniciclo(output testout);
 	alu_control ALU_control(
 		.opALU(opALU),
 		.funct(instruction[5:0]),
-		.operation(ALUoperation)	
-	
+		.operation(ALUoperation)		
 	);
 	
 	//ULA Principal
@@ -112,9 +128,6 @@ module mips_uniciclo(output testout);
 		.operation(ALUoperation), //TODO: Tem que delegar a escolha da operação
 		.result(ALUresult) //TODO: Coloquei de volta no banco, mas na verdade tem que fazer um mux.
 	);
-	
-	
-	
 	
 	
 endmodule
