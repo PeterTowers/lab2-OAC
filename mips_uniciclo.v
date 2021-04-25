@@ -23,21 +23,21 @@ module mips_uniciclo(output testout);
 	parameter clock_period = 500;	
 	
 	//TODO: estes reg são temporário até os outros módulos estarem prontos.
-	reg[6:0] pc;	
+	reg[31:0] pc;	
 	
 	//Fim dos reg temporários
 	
 	initial begin
 		pc = 0;
 		clock = 1'b0;
-		#(10* clock_period) $finish;
+		#(10* clock_period) $stop;
 	end
 	
 	always begin// Sobe e desce o cinal de clock a cada meio periodo
-		#(clock_period/2) clock <= ~clock;		
+		#(clock_period/2) clock = ~clock;		
 	end
 	always begin// Avança PC
-		#clock_period pc <= pc + 1;
+		#clock_period pc = pc + 1;
 	end
 	
 	//Banco de Registradores
@@ -57,7 +57,6 @@ module mips_uniciclo(output testout);
 		.opcode(instruction[31:26]),
 		.reg_dst(reg_dst),
 		.branch(),
-		.read_mem(),
 		.mem_to_reg(mem_to_reg),
 		.opALU(opALU),
 		.write_enable_mem(write_enable_mem),
@@ -68,9 +67,9 @@ module mips_uniciclo(output testout);
 	
 	//Memória das instruções
 	inst_memory memoria_instrucao(
-		.address(pc),
+		.address(pc[6:0]),
 		.clock(clock),
-		.data(mem_data),
+		.data(), // Ninguem vai escrever na memória de instruções
 		.wren(1'b0),
 		.q(instruction)
 	);
@@ -125,8 +124,8 @@ module mips_uniciclo(output testout);
 	alu main_ALU(
 		.A(reg_bank_data1), 
 		.B(ALUoperand_b), 
-		.operation(ALUoperation), //TODO: Tem que delegar a escolha da operação
-		.result(ALUresult) //TODO: Coloquei de volta no banco, mas na verdade tem que fazer um mux.
+		.operation(ALUoperation),
+		.result(ALUresult) 
 	);
 	
 	
