@@ -1,22 +1,24 @@
 module control_unit(
 	input[0:5] opcode,
 	output reg reg_dst, // escolhe qual o registrador em que será salvo. Se so tem 2 é 0, se temos 3, é 1.
-	output reg branch, // para as funcoes de jump. 1 é jump
+	output reg jump,					// Para as instrucoes de JUMP. 1 indica jump
+	output reg branch,				// Para as instrucoes de BRANCH. 1 indica branch
 	output reg mem_to_reg,
 	output reg[3:0] opALU,
-	output reg write_enable_mem,
+	output reg write_enable_mem,	// Habilita escrita na memoria de dados
 	output reg origALU,
-	output reg write_enable_reg
+	output reg write_enable_reg	// Habilita escrita no banco de registradores
 	);
 	
 	initial begin
-		write_enable_reg = 1'b0;
 		reg_dst = 1'b0;
-		branch = 1'b0; 
+		jump = 1'b0;
+		branch = 1'b0;
 		mem_to_reg = 1'b0;
-		opALU = 1'b0;
+		opALU = 4'b0;
 		write_enable_mem = 1'b0;
-		origALU = 1'b0;	
+		origALU = 1'b0;
+		write_enable_reg = 1'b0;
 	end	
 	
 	always @(*)
@@ -97,15 +99,42 @@ module control_unit(
 					write_enable_mem <= 1'b0; //Não escreve na memória
 					mem_to_reg <= 1'b0; // Não escreve na memória.
 				end
+				
+/*----------------------------------------------------------------------------*/
+/* Instruções tipo J */
+			6'b000010:	// J (jump) TODO
+				begin
+					reg_dst <= 1'bx; 				// Nao escreve bco reg, nao importa
+					jump <= 1'b1;					// Instrucao de jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'bx; 			// Nao escreve, nao importa
+					opALU <= 4'bx; 				// Nao usa ALU, nao importa
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'bx; 				// Nao usa ALU, nao importa
+					write_enable_reg <= 1'b0;	// NAO escreve registrador
+				end
+/*
+	output reg reg_dst, // escolhe qual o registrador em que será salvo. Se so tem 2 é 0, se temos 3, é 1.
+	output reg jump,					// Para as instrucoes de JUMP. 1 indica jump
+	output reg branch,				// Para as instrucoes de BRANCH. 1 indica branch
+	output reg mem_to_reg,
+	output reg[3:0] opALU,
+	output reg write_enable_mem,	// Habilita escrita na memoria de dados
+	output reg origALU,
+	output reg write_enable_reg	// Habilita escrita no banco de registradores
+*/
 			
 			default:
 				begin
-					write_enable_reg <= 1'd0; 
-					reg_dst <= 1'd0; 
-					opALU <= 4'd0; 
-					origALU <= 1'd0;
-					write_enable_mem <= 1'b0; 
+					reg_dst <= 1'b0;
+					jump <= 1'b0;
+					branch <= 1'b0;
 					mem_to_reg <= 1'b0;
+					opALU <= 4'b0; 
+					write_enable_reg <= 1'b0;
+					origALU <= 1'b0;
+					write_enable_mem <= 1'b0; 
+					
 				end
 				
 		endcase
