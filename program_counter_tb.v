@@ -3,8 +3,9 @@
 module program_counter_tb;
 
 	// Inputs
-	reg	clk, branch, alu_zero;	
-	reg	[31:0] address;
+	reg	clk, branch, alu_zero, jump;
+	reg	[31:0] b_address;
+	reg	[25:0] j_address;
 	wire	[31:0] out;
 	
 	localparam period = 20;
@@ -13,7 +14,9 @@ module program_counter_tb;
 		.clk(clk), 
 		.branch(branch),
 		.alu_zero(alu_zero),
-		.address(address),
+		.jump(jump),
+		.b_address(b_address),
+		.j_address(j_address),
 		.out(out)
 	);
 	
@@ -43,42 +46,61 @@ module program_counter_tb;
 	initial begin
 		branch = 0;
 		alu_zero = 0;
-		address = 32'bx;
+		jump = 0;
+		b_address = 32'bx;
+		j_address = 26'bx;
 		#period;
 		
-		$display("Out: %0d\nAddress: %0d", out, address);
+		$display("Out: %0d\nBranch address: %0d", out, b_address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
 		test_result(0);	// First instruction, starts at 0
 		#period;
 		
 		branch = 0;
 		alu_zero = 1;
-		address = 32'bx;
+		jump = 0;
+		b_address = 32'bx;
+		j_address = 26'bx;
 		#period;
 		
-		$display("Out: %0d\nAddress: %0d", out, address);
+		$display("Out: %0d\nBranch address: %0d", out, b_address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
 		test_result(1);	// Only alu_zero is set, so PC+1 = 4
 		#period;
 		
 		branch = 1;
 		alu_zero = 0;
-		address = 32'bx;
+		jump = 0;
+		b_address = 32'bx;
+		j_address = 26'bx;
 		#period;
 		
-		$display("Out: %0d\nAddress: %0d", out, address);
+		$display("Out: %0d\nBranch address: %0d", out, b_address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
 		test_result(2);	// Now, only branch is set, so PC+1 = 8
 		#period;
 		
 		branch = 1;
 		alu_zero = 1;
-		address = 32'b1010;
+		jump = 0;
+		b_address = 32'b1010;
+		j_address = 26'bx;
 		#period;
 		
-		$display("Out: %0d\nAddress: %0d", out, address);
+		$display("Out: %0d\nBranch address: %0d", out, b_address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
 		test_result(43);	// Both variables are set, so PC = PC + address*4 = 43
+		
+		branch = 0;
+		alu_zero = 0;
+		jump = 1;
+		b_address = 32'bx;
+		j_address = 26'b1111;
+		#period;
+		
+		$display("Out: %0d\nJump address: %0d", out, j_address);
+		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
+		test_result(60);	// Both variables are set, so PC = PC + address*4 = 43
 	end
 	
 endmodule
