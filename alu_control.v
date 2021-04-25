@@ -24,13 +24,10 @@ module alu_control(
 				operation <= 6'b100101; // Or
 			4'd5:
 				operation <= 6'b100110; // Xor
-			
-			
-		endcase
-	
-	end
-	
-	
+			default:
+				operation <= 6'b100000; // Soma			
+		endcase	
+	end	
 endmodule
 	
 	

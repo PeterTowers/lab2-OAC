@@ -10,8 +10,14 @@ module alu (
 			6'b100000: // Add
 				// TODO: Testar overflow
 				result <= A + B;
+			6'b100001: // ADDU
+				// OBSERVAÇÃO: O ADDU é simplesmente um add sem teste de overflow.
+				result <= A + B;
 			6'b100010: // Sub
 				// TODO: Testar overflow
+				result <= A - B;
+			6'b100011: // SUBU
+				// OBSERVAÇÃO: O SUBU é simplesmente um sub sem teste de overflow.
 				result <= A - B;
 			6'b100100: // And
 				result <= A & B;
@@ -21,7 +27,9 @@ module alu (
 				result <= ~(A | B);
 			6'b100110: // XOR
 				result <= A ^ B;
-			default: result <= 32'hFFFFFFFF;
+			6'b000010: // MUL
+				result <= A * B;
+			default: result <= 32'd0;
 		endcase
 	end
 	
