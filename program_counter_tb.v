@@ -37,7 +37,7 @@ module program_counter_tb;
 
 /*----------------------------------------------------------------------------*/
 	/* Tests checking behaviour of PC when variables branch and alu_zero change.
-	 * PC should always increase by 4, except when branch AND alu_zero are equal
+	 * PC should always increase by 1, except when branch AND alu_zero are equal
 	 * to 1. In that case, PC = PC + address*4.
 	 */
 	initial begin
@@ -58,7 +58,7 @@ module program_counter_tb;
 		
 		$display("Out: %0d\nAddress: %0d", out, address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
-		test_result(4);	// Only alu_zero is set, so PC+4 = 4
+		test_result(1);	// Only alu_zero is set, so PC+1 = 4
 		#period;
 		
 		branch = 1;
@@ -68,7 +68,7 @@ module program_counter_tb;
 		
 		$display("Out: %0d\nAddress: %0d", out, address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
-		test_result(8);	// Now, only branch is set, so PC+4 = 8
+		test_result(2);	// Now, only branch is set, so PC+1 = 8
 		#period;
 		
 		branch = 1;
@@ -78,7 +78,7 @@ module program_counter_tb;
 		
 		$display("Out: %0d\nAddress: %0d", out, address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
-		test_result(52);	// Both variables are set, so PC = PC + address*4 = 52
+		test_result(43);	// Both variables are set, so PC = PC + address*4 = 43
 	end
 	
 endmodule
