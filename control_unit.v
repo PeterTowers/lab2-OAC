@@ -1,15 +1,17 @@
 module control_unit(
-	input[0:5] opcode,
-	output reg reg_dst, // escolhe qual o registrador em que será salvo. Se so tem 2 é 0, se temos 3, é 1.
-	output reg jump,					// Para as instrucoes de JUMP. 1 indica jump
-	output reg branch,				// Para as instrucoes de BRANCH. 1 indica branch
-	output reg mem_to_reg,
-	output reg[3:0] opALU,
+	input[0:5] opcode,				// OPCODE da instrucao
+	output reg reg_dst, 				// Escolhe o reg em que sera salvo P/ instrucao
+											// com 2 é 0, p/ 3, é 1.
+	output reg jump,					// P/ instrucoes de JUMP. 1 indica jump
+	output reg branch,				// P/ instrucoes de BRANCH. 1 indica branch
+	output reg mem_to_reg,			// Escrita da memoria de dados no banco de reg
+	output reg[3:0] opALU,			// Operacao a ser executada na ALU
 	output reg write_enable_mem,	// Habilita escrita na memoria de dados
-	output reg origALU,
+	output reg origALU,				// Origem do 2o operando da ALU
 	output reg write_enable_reg	// Habilita escrita no banco de registradores
 	);
-	
+
+	// Condicoes iniciais setadas como todos sinais iguais a zero
 	initial begin
 		reg_dst = 1'b0;
 		jump = 1'b0;
@@ -24,85 +26,109 @@ module control_unit(
 	always @(*)
 	begin
 		case(opcode)
+/*----------------------------------------------------------------------------*/
+			/* Instruções tipo R */
+			6'b000000:
+				begin
+					reg_dst <= 1'd1; 				// Temos 3 registradores nesse caso
+					jump <= 1'b0;					// NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd0;					// Operacaoo decidida pelo campo funct
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+				end
+
+/*----------------------------------------------------------------------------*/
+			/* Instruções tipo I */				
 			6'b001000:  //ADDI
 				begin
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
-					opALU <= 4'd1; // Operação Soma.
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
-					write_enable_mem <= 1'b0; //Não escreve na memória
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
-					
+					reg_dst <= 1'b0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd1;					// Operação de soma na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1; 				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
+				
 			6'b001100:  //ANDI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensão sinalizada.
 				begin 
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
-					opALU <= 4'd3; // Operação And
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
-					write_enable_mem <= 1'b0; //Não escreve na memória
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
+					reg_dst <= 1'd0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd3;					// Operacao AND na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
+				
 			6'b001101:  //ORI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensã sinalizada.
 				begin 
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
-					opALU <= 4'd4; // Operação Or
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
-					write_enable_mem <= 1'b0; //Não escreve na memóriaa
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
+					reg_dst <= 1'd0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd4;					// Operacao OR na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
+				
 			6'b001110:  //XORI //TODO: No manual do MIPS diz que a extensão de sinal no ANDI é sempre de zeros, porém, na forma atual está extensã sinalizada.
 				begin 
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd0; // Só temos 2 registradores nesse caso.
-					opALU <= 4'd5; // Operação xor
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato.
-					write_enable_mem <= 1'b0; //Não escreve na memória
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
+					reg_dst <= 1'd0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd5;					// Operacao XOR na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
-			6'b000000:  //Tipo-R
-				begin
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd1; // Temos 3 registradores nesse caso.
-					opALU <= 4'd0; // Operação decidida pelo campo funct.
-					origALU <= 1'd0; // O segundo operando da ULA é o segundo registrador.
-					write_enable_mem <= 1'b0; //Não escreve na memória
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
-				end
+			
 			6'b101011:  //SW
 				begin
-					write_enable_reg <= 1'd0; // Não escreve no banco de registradores.
-					reg_dst <= 1'd0; // Temos 2 registradores nesse caso.
-					opALU <= 4'd1; // ULA deve somar.
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato/offset.
-					write_enable_mem <= 1'b1; //Escreve na memória
-					mem_to_reg <= 1'b0; // Se 1, envia dado da memória de volta para o banco de registradores.
-					
+					reg_dst <= 1'd0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd1;					// Operacao de soma na ALU
+					write_enable_mem <= 1'b1;	// Escreve na memória
+					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
+					write_enable_reg <= 1'd0;	// NAO escreve registrador
 				end
+				
 			6'b100011:  //LW
 				begin
-					write_enable_reg <= 1'd1; // Escreve no banco de registradores.
-					reg_dst <= 1'd0; // Temos 2 registradores nesse caso.
-					opALU <= 4'd1; // ULA deve somar.
-					origALU <= 1'd1; // O segundo operando da ULA é o imediato/offset.
-					write_enable_mem <= 1'b0; //Não Escreve na memória.
-					mem_to_reg <= 1'b1; // Se 1, envia a saída da memória para escrever no banco de registrador.
+					reg_dst <= 1'b0;				// Apenas 2 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b1;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd1;					// Operacao de soma na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memória
+					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
 			
 			6'b011100:  //MUL - SPECIAL2
 				begin
-					write_enable_reg <= 1'd1; // Essa operacão escreve no banco de registradores.
-					reg_dst <= 1'd1; // Temos 3 registradores nesse caso.
-					opALU <= 4'd0; // Operação decidida pelo campo funct.
-					origALU <= 1'd0; // O segundo operando da ULA é o segundo registrador.
-					write_enable_mem <= 1'b0; //Não escreve na memória
-					mem_to_reg <= 1'b0; // Não escreve na memória.
+					reg_dst <= 1'd1; 				// Temos 3 registradores nesse caso
+					jump <= 1'b0;					//	NAO faz jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd0;					// Operacao decidida pelo campo funct
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
 				
 /*----------------------------------------------------------------------------*/
-/* Instruções tipo J */
-			6'b000010:	// J (jump) TODO
+			/* Instruções tipo J */
+			6'b000010:	// J (jump)
 				begin
 					reg_dst <= 1'bx; 				// Nao escreve bco reg, nao importa
 					jump <= 1'b1;					// Instrucao de jump
@@ -113,17 +139,21 @@ module control_unit(
 					origALU <= 1'bx; 				// Nao usa ALU, nao importa
 					write_enable_reg <= 1'b0;	// NAO escreve registrador
 				end
-/*
-	output reg reg_dst, // escolhe qual o registrador em que será salvo. Se so tem 2 é 0, se temos 3, é 1.
-	output reg jump,					// Para as instrucoes de JUMP. 1 indica jump
-	output reg branch,				// Para as instrucoes de BRANCH. 1 indica branch
-	output reg mem_to_reg,
-	output reg[3:0] opALU,
-	output reg write_enable_mem,	// Habilita escrita na memoria de dados
-	output reg origALU,
-	output reg write_enable_reg	// Habilita escrita no banco de registradores
-*/
-			
+				
+			6'b000011:	// JAL (jump and link) TODO
+				begin
+					reg_dst <= 1'bx; 				// Nao escreve bco reg, nao importa
+					jump <= 1'b1;					// Instrucao de jump
+					branch <= 1'b0;				// NAO faz branch
+					mem_to_reg <= 1'bx; 			// Nao escreve, nao importa
+					opALU <= 4'bx; 				// Nao usa ALU, nao importa
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'bx; 				// Nao usa ALU, nao importa
+					write_enable_reg <= 1'b0;	// NAO escreve registrador
+				end
+				
+/*----------------------------------------------------------------------------*/
+			/* DEFAULT */
 			default:
 				begin
 					reg_dst <= 1'b0;
@@ -133,12 +163,9 @@ module control_unit(
 					opALU <= 4'b0; 
 					write_enable_reg <= 1'b0;
 					origALU <= 1'b0;
-					write_enable_mem <= 1'b0; 
-					
-				end
-				
+					write_enable_mem <= 1'b0; 					
+				end				
 		endcase
 	end
-	
 	
 endmodule
