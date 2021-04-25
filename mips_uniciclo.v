@@ -55,8 +55,10 @@ module mips_uniciclo(output testout);
 	//Unidade de Controle
 	control_unit control_unit(
 		.opcode(instruction[31:26]),
+		.funct(instruction[5:0]),
 		.reg_dst(reg_dst),
-		.branch(),
+		.branch(),	// TODO
+		.jump(),		// TODO
 		.mem_to_reg(mem_to_reg),
 		.opALU(opALU),
 		.write_enable_mem(write_enable_mem),
