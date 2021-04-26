@@ -1,5 +1,5 @@
 module control_unit(
-	input[0:5] opcode,				// OPCODE da instrucao
+	input[0:5] opcode, funct,		// Campos "opcode" e "funct"
 	output reg reg_dst, 				// Escolhe o reg em que sera salvo P/ instrucao
 											// com 2 é 0, p/ 3, é 1.
 	output reg jump,					// P/ instrucoes de JUMP. 1 indica jump
@@ -23,22 +23,151 @@ module control_unit(
 		write_enable_reg = 1'b0;
 	end	
 	
-	always @(*)
-	begin
+	always @(*) begin
 		case(opcode)
 /*----------------------------------------------------------------------------*/
 			/* Instruções tipo R */
-			6'b000000:
-				begin
-					reg_dst <= 1'd1; 				// Temos 3 registradores nesse caso
-					jump <= 1'b0;					// NAO faz jump
-					branch <= 1'b0;				// NAO faz branch
-					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd0;					// Operacaoo decidida pelo campo funct
-					write_enable_mem <= 1'b0;	// NAO escreve na memoria
-					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
-				end
+			6'b000000: begin
+				reg_dst <= 1'd1; 				// Temos 3 registradores nesse caso
+				mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+				write_enable_mem <= 1'b0;	// NAO escreve na memoria
+				origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
+					
+				case (funct)
+					6'b10_0000: begin	// ADD
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b1;					// Operacao de soma na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b10_0001: begin	// ADDU
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b1;					// Operacao de soma na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b10_0100: begin	// AND
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b11;				// Operacao AND na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					/* TODO:
+					6'b01_1010: begin	// DIV
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					*/
+					
+					6'b00_1001: begin	// JALR
+						jump <= 1'b1;					// Faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b00_1000: begin	// JR
+						jump <= 1'b1;					// Faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b0;	// NAO escreve no banco de reg
+					end
+					
+					/* TODO:
+					6'b01_0000: begin	// MFHI
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b01_0010: begin	// MFLO
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					*/
+					
+					6'b10_0111: begin	// NOR
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao NOR na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b10_0101: begin	// OR
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b100;				// Operacao OR na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					/* TODO:
+					6'b00_0000: begin	// SLL
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b10_1010: begin	// SLT
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b00_0011: begin	// SRA
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b00_0111: begin	// SRAV
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b00_0010: begin	// SRL
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao ??? na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					*/
+					
+					6'b10_0010: begin	// SUB
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao de subtracao na ALU - TODO: colocar valor da operacao na atribuicao da variavel
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+
+					6'b10_0011: begin	// SUBU
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b0;					// Operacao de subtracao na ALU - TODO: colocar valor da operacao na atribuicao da variavel
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+					6'b10_0110: begin	// XOR
+						jump <= 1'b0;					// NAO faz jump
+						branch <= 1'b0;				// NAO faz branch
+						opALU <= 4'b101;				// Operacao XOR na ALU
+						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+					end
+					
+				endcase
+			end
 
 /*----------------------------------------------------------------------------*/
 			/* Instruções tipo I */				
