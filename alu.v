@@ -2,7 +2,7 @@ module alu (
 	input [31:0] A, B, //Os operandos
 	input [5:0] operation, 
 	output reg [31:0] result,
-	output alu_zero
+	output reg alu_zero
 	);
 	
 	initial begin
@@ -26,7 +26,7 @@ module alu (
 				result <= A - B;
 				
 				if (result == 0)	// For beq instruction, result = 0 means equality
-					alu_zero <= 1;
+					alu_zero <= 1'b1;
 			end
 			
 			6'b100011: // SUBU
