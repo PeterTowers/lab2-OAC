@@ -20,6 +20,8 @@ module mips_uniciclo(output testout);
 	wire [31:0] write_on_bank; // Aquilo que será escrito no banco
 	reg clock;
 	
+	wire [31:0] pc2;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e não quebrar o restante do programa)
+	
 	parameter clock_period = 500;	
 	
 	//TODO: estes reg são temporário até os outros módulos estarem prontos.
@@ -50,7 +52,7 @@ module mips_uniciclo(output testout);
 		.b_address(b_address),	// Endereco do branch
 		.reg_addr(reg_addr),		// Endereco do jump vindo de registrador (jr/jalr)
 		.j_address(j_address),	// Endereco do jump incondicional (j/jal)
-		.out(pc)						// Saida do PC (PC atual) TODO: definir p/ onde vai (variavel pc eh ok?)
+		.out(pc2)					// Saida do PC (PC atual) TODO: definir p/ onde vai (um wire pc eh ok?)
 	);
 	
 	//Banco de Registradores
