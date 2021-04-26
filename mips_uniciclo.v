@@ -1,35 +1,30 @@
 module mips_uniciclo(output testout);
-
 	
-	wire[31:0] instruction; // Sai da memória de instruções e alimenta o controle, o banco de registradores e TODO: Extensão de sinal
+	wire[31:0] instruction; 	// Sai da memoria de instrucoes e alimenta o controle, o banco de registradores e TODO: Extensao de sinal
 	
-	
-	wire [1:0] reg_dst; // Gerado pela unidade de controle, decide qual o registrador para escrita.
-	wire[4:0] reg_dst_write; // Registrador selecionado para escrita
-	wire origALU; // Fio para decidir se a ALU operador B usa Imediato ou registrador
-	wire[3:0] opALU; // Gerado pela unidade de controle, ajuda a decidir a operação da ULA.
-	wire[5:0] ALUoperation; // Escolhe se ULA vai somar, subtrair, etc.
-	wire[31:0] reg_bank_data1, reg_bank_data2; // São os valores lidos do banco de registradores
-	wire[31:0] ALUoperand_b; //O segundo operando da ULA.
-	wire[31:0] ALUresult; //Resultado da ULA
-	wire[31:0] sign_extended_imm; // Imediato com sinal extendido.
-	wire write_enable_reg; // Se 1, ocorrerá uma escrita no banco de registradores na subida do clock.
-	wire write_enable_mem; // Se 1, ocorrerá uma escrita na memória de dados na subida do clock.
-	wire [31:0] mem_data; // O dado que foi lido na memória.
-	wire mem_to_reg; //Se 1, o dado da memória é enviado para a escrita do banco de registradores.
-	wire [31:0] write_on_bank; // Aquilo que será escrito no banco
+	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide qual o registrador para escrita.
+	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
+	wire origALU; 					// Fio para decidir se a ALU operador B usa Imediato ou registrador
+	wire [3:0] opALU; 				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
+	wire [5:0] ALUoperation; 	// Escolhe se ULA vai somar, subtrair, etc.
+	wire [31:0] reg_bank_data1, reg_bank_data2; // Sao os valores lidos do banco de registradores
+	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
+	wire [31:0] ALUresult; 		//Resultado da ULA
+	wire [31:0] sign_extended_imm; // Imediato com sinal extendido.
+	wire write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
+	wire write_enable_mem; 		// Se 1, ocorrera uma escrita na memoria de dados na subida do clock.
+	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
+	wire mem_to_reg; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
+	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	wire [1:0] pc_src;
 	wire alu_zero;
 	reg clock;
 	
-	wire [31:0] pc;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e não quebrar o restante do programa)
+	wire [31:0] pc;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e nao quebrar o restante do programa)
 	
 	parameter clock_period = 500;	
 	
-	//TODO: estes reg são temporário até os outros módulos estarem prontos.
-	//reg[31:0] pc;	
-	
-	//Fim dos reg temporários
+	//Fim dos reg temporarios
 	
 	initial begin
 		//pc = 0;
@@ -37,22 +32,19 @@ module mips_uniciclo(output testout);
 		#(10* clock_period) $stop;
 	end
 	
-	always begin// Sobe e desce o cinal de clock a cada meio periodo
+	always begin	// Sobe e desce o sinal de clock a cada meio periodo
 		#(clock_period/2) clock = ~clock;		
-	end
-	always begin// Avança PC
-		//#clock_period pc = pc + 1;
 	end
 
 	// Modulo do PC
 	program_counter p_counter(
 		.clk(clock),
-		.pc_src(pc_src),			// Sinal de controle p/ branch
-		.alu_zero(alu_zero),		// Sinal de controle caso igual (ou não: beq/bne)
+		.pc_src(pc_src),						// Sinal de controle p/ branch
+		.alu_zero(alu_zero),					// Sinal de controle caso igual (ou nao: beq/bne)
 		.b_address(sign_extended_imm),	// Endereco do branch
-		.reg_addr(reg_bank_data1),		// Endereco do jump vindo de registrador (jr/jalr)
+		.reg_addr(reg_bank_data1),			// Endereco do jump vindo de registrador (jr/jalr)
 		.j_address(instruction[25:0]),	// Endereco do jump incondicional (j/jal)
-		.pc(pc)					// Saida do PC (PC atual) TODO: definir p/ onde vai (um wire pc eh ok?)
+		.pc(pc)									// Saida do PC (PC atual)
 	);
 	
 	//Banco de Registradores
@@ -81,16 +73,16 @@ module mips_uniciclo(output testout);
 	);
 	
 	
-	//Memória das instruções
+	//Memoria das instrucoes
 	inst_memory memoria_instrucao(
 		.address(pc[6:0]),
 		.clock(clock),
-		.data(), // Ninguem vai escrever na memória de instruções
+		.data(), 			// Ninguem vai escrever na memoria de instrucoes
 		.wren(1'b0),
 		.q(instruction)
 	);
 	
-	//Memória de dados
+	//Memoria de dados
 	data_memory3 memoria_dados(
 		.address(ALUresult[6:0]),
 		.clock(clock),
@@ -115,7 +107,7 @@ module mips_uniciclo(output testout);
 		.out(ALUoperand_b)
 	);
 	
-	//Mux pera escolher se o que vai para a escrita do banco de registradores é o resultado da ULA ou o dado da Memória
+	//Mux pera escolher se o que vai para a escrita do banco de registradores eh o resultado da ULA ou o dado da Memoria
 	mux1_32bits write_reg_bank_mux(
 		.option_a(ALUresult),
 		.option_b(mem_data),
