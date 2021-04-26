@@ -186,6 +186,16 @@ module control_unit(
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 				end
 				
+			6'b000100:	// BEQ
+				begin
+					pc_src = 2'b00;				// Branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 4'd2;					// Operacao de subtracao na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd0;	// Escreve no banco de registradores
+				end
+				
 			6'b001101:  //ORI //TODO: No manual do MIPS diz que a extensao de sinal no ANDI eh sempre de zeros, porem, na forma atual esta extensao sinalizada.
 				begin 
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
