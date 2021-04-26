@@ -3,8 +3,8 @@
 module program_counter_tb;
 
 	// Inputs
-	reg	clk, branch, alu_zero, jump;
-	reg	[31:0] b_address;
+	reg	clk, branch, alu_zero, jump, jr;
+	reg	[31:0] b_address, reg_addr;
 	reg	[25:0] j_address;
 	wire	[31:0] out;
 	
@@ -15,8 +15,10 @@ module program_counter_tb;
 		.branch(branch),
 		.alu_zero(alu_zero),
 		.jump(jump),
+		.jr(jr),
 		.b_address(b_address),
 		.j_address(j_address),
+		.reg_addr(reg_addr),
 		.out(out)
 	);
 	
@@ -101,6 +103,19 @@ module program_counter_tb;
 		$display("Out: %0d\nJump address: %0d", out, j_address);
 		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
 		test_result(60);	// Both variables are set, so PC = PC + address*4 = 43
+		
+		branch = 0;
+		alu_zero = 0;
+		jump = 0;
+		jr = 1;
+		b_address = 32'bx;
+		j_address = 26'b1111;
+		reg_addr = 32'b1101_1110_1010_1101_1011_1110_1110_1111;
+		#period;
+		
+		$display("Out: %0d\nJump address: %0d", out, j_address);
+		$display("Branch: %0d, Alu_zero: %0d", branch, alu_zero);
+		test_result(32'hdeadbeef);	// Both variables are set, so PC = PC + address*4 = 43
 	end
 	
 endmodule
