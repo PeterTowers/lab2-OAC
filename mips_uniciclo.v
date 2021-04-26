@@ -4,7 +4,7 @@ module mips_uniciclo(output testout);
 	wire[31:0] instruction; // Sai da memória de instruções e alimenta o controle, o banco de registradores e TODO: Extensão de sinal
 	
 	
-	wire reg_dst; // Gerado pela unidade de controle, decide qual o registrador para escrita.
+	wire [1:0] reg_dst; // Gerado pela unidade de controle, decide qual o registrador para escrita.
 	wire[4:0] reg_dst_write; // Registrador selecionado para escrita
 	wire origALU; // Fio para decidir se a ALU operador B usa Imediato ou registrador
 	wire[3:0] opALU; // Gerado pela unidade de controle, ajuda a decidir a operação da ULA.
@@ -18,19 +18,21 @@ module mips_uniciclo(output testout);
 	wire [31:0] mem_data; // O dado que foi lido na memória.
 	wire mem_to_reg; //Se 1, o dado da memória é enviado para a escrita do banco de registradores.
 	wire [31:0] write_on_bank; // Aquilo que será escrito no banco
+	wire [1:0] pc_src;
+	wire alu_zero;
 	reg clock;
 	
-	wire [31:0] pc2;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e não quebrar o restante do programa)
+	wire [31:0] pc;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e não quebrar o restante do programa)
 	
 	parameter clock_period = 500;	
 	
 	//TODO: estes reg são temporário até os outros módulos estarem prontos.
-	reg[31:0] pc;	
+	//reg[31:0] pc;	
 	
 	//Fim dos reg temporários
 	
 	initial begin
-		pc = 0;
+		//pc = 0;
 		clock = 1'b0;
 		#(10* clock_period) $stop;
 	end
@@ -39,20 +41,18 @@ module mips_uniciclo(output testout);
 		#(clock_period/2) clock = ~clock;		
 	end
 	always begin// Avança PC
-		#clock_period pc = pc + 1;
+		//#clock_period pc = pc + 1;
 	end
 
 	// Modulo do PC
 	program_counter p_counter(
 		.clk(clock),
-		.branch(branch),			// Sinal de controle p/ branch
+		.pc_src(pc_src),			// Sinal de controle p/ branch
 		.alu_zero(alu_zero),		// Sinal de controle caso igual (ou não: beq/bne)
-		.jump(jump),				// Sinal de controle p/ jump incondicional (j/jal)
-		.jr(jr),						// Sinal de controle p/ jump com registrador (jr/jalr)
-		.b_address(b_address),	// Endereco do branch
-		.reg_addr(reg_addr),		// Endereco do jump vindo de registrador (jr/jalr)
-		.j_address(j_address),	// Endereco do jump incondicional (j/jal)
-		.out(pc2)					// Saida do PC (PC atual) TODO: definir p/ onde vai (um wire pc eh ok?)
+		.b_address(sign_extended_imm),	// Endereco do branch
+		.reg_addr(reg_bank_data1),		// Endereco do jump vindo de registrador (jr/jalr)
+		.j_address(instruction[25:0]),	// Endereco do jump incondicional (j/jal)
+		.pc(pc)					// Saida do PC (PC atual) TODO: definir p/ onde vai (um wire pc eh ok?)
 	);
 	
 	//Banco de Registradores
@@ -72,8 +72,7 @@ module mips_uniciclo(output testout);
 		.opcode(instruction[31:26]),
 		.funct(instruction[5:0]),
 		.reg_dst(reg_dst),
-		.branch(),	// TODO
-		.jump(),		// TODO
+		.pc_src(pc_src),
 		.mem_to_reg(mem_to_reg),
 		.opALU(opALU),
 		.write_enable_mem(write_enable_mem),
@@ -142,7 +141,8 @@ module mips_uniciclo(output testout);
 		.A(reg_bank_data1), 
 		.B(ALUoperand_b), 
 		.operation(ALUoperation),
-		.result(ALUresult) 
+		.result(ALUresult),
+		.alu_zero(alu_zero)
 	);
 	
 	
