@@ -39,6 +39,19 @@ module mips_uniciclo(output testout);
 	always begin// Avança PC
 		#clock_period pc = pc + 1;
 	end
+
+	// Modulo do PC
+	program_counter p_counter(
+		.clk(clock),
+		.branch(branch),			// Sinal de controle p/ branch
+		.alu_zero(alu_zero),		// Sinal de controle caso igual (ou não: beq/bne)
+		.jump(jump),				// Sinal de controle p/ jump incondicional (j/jal)
+		.jr(jr),						// Sinal de controle p/ jump com registrador (jr/jalr)
+		.b_address(b_address),	// Endereco do branch
+		.reg_addr(reg_addr),		// Endereco do jump vindo de registrador (jr/jalr)
+		.j_address(j_address),	// Endereco do jump incondicional (j/jal)
+		.out(pc)						// Saida do PC (PC atual) TODO: definir p/ onde vai (variavel pc eh ok?)
+	);
 	
 	//Banco de Registradores
 	register_bank reg_bank(
