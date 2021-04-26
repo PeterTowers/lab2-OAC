@@ -1,0 +1,15 @@
+DEPTH = 128;
+WIDTH = 32;
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+CONTENT
+BEGIN
+
+00000000 : 8c080000; % 5: lw $t0, 0($zero) %
+00000001 : 8c090001; % 6: lw $t1, 1($zero) %
+00000002 : 8c0a0002; % 7: lw $t2, 2($zero) %
+00000003 : 8c0b0003; % 8: lw $t3, 3($zero) %
+00000004 : 8c0c0004; % 9: lw $t4, 4($zero) %
+00000005 : 71096802; % 10: mul $t5, $t0, $t1 %        
+
+END;
