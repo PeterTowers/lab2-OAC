@@ -7,9 +7,9 @@ module program_counter_tb;
 	reg	[1:0]  pc_src;
 	reg	[31:0] b_address, reg_addr;
 	reg	[25:0] j_address;
-	wire	[31:0] out;
+	wire	[31:0] pc;
 	
-	localparam period = 20;
+	localparam period = 500;
 	
 	program_counter test_unit(
 		.clk(clk), 
@@ -18,25 +18,25 @@ module program_counter_tb;
 		.b_address(b_address),
 		.j_address(j_address),
 		.reg_addr(reg_addr),
-		.out(out)
+		.pc(pc)
 	);
 	
 	task test_result;
 		input [31:0] expected_value;
 		begin			
-			if (out == expected_value) 
+			if (pc == expected_value) 
 				$display("correct\n");
 			else  
-				$display("INCORRECT! Expected: %0d; Got: %0d", expected_value, out);
+				$display("INCORRECT! Expected: %0d; Got: %0d", expected_value, pc);
 		end
 	endtask
 	
 	always begin
 		clk = 1'b1;
-		#20;	// high for 20
+		#500;	// high for 20
 		
 		clk = 1'b0;
-		#20;	// low for 20
+		#500;	// low for 20
 	end
 
 /*----------------------------------------------------------------------------*/
@@ -52,7 +52,7 @@ module program_counter_tb;
 		reg_addr = 32'bx;		// Doesn't matter
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(0);	// First instruction, starts at 0
@@ -65,7 +65,7 @@ module program_counter_tb;
 		reg_addr = 32'bx;		// Doesn't matter
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(1);	// Only alu_zero is set, so PC+1 = 1
@@ -78,7 +78,7 @@ module program_counter_tb;
 		reg_addr = 32'bx;		// Doesn't matter
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(2);	// Branch is set, but not eq. or ineq. so PC+1 = 2
@@ -91,7 +91,7 @@ module program_counter_tb;
 		reg_addr = 32'bx;			// Doesn't matter
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(43);	// Branch is set & condition is met, so PC = PC + address*4 = 43
@@ -103,7 +103,7 @@ module program_counter_tb;
 		reg_addr = 32'bx;			// Doesn't matter
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(60);	// pc_src is set for jump, so PC = address*4 = 60
@@ -115,10 +115,11 @@ module program_counter_tb;
 		reg_addr = 32'b1101_1110_1010_1101_1011_1110_1110_1111; // Address set in register
 		#period;
 		
-		$display("Out: %0d\nBranch address: %0d", out, b_address);
+		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(32'hdeadbeef);	// pc_src is set for jr/jalr, so PC = reg_addr
+		$stop;
 	end
 	
 endmodule
