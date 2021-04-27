@@ -97,7 +97,6 @@ set_global_assignment -name QIP_FILE inst_memory.qip
 set_global_assignment -name MIF_FILE UnicicloInst.mif
 set_global_assignment -name MIF_FILE UnicicloData.mif
 set_global_assignment -name VECTOR_OUTPUT_FORMAT VWF
-set_global_assignment -name VERILOG_FILE mips_uniciclo_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME mips_uniciclo_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mips_uniciclo_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mips_uniciclo_tb -section_id mips_uniciclo_tb

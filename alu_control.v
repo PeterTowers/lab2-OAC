@@ -69,8 +69,8 @@ module alu_control(
 						operation <= 4'b1101;
 				endcase
 
-			3'b111:	// Branch BNE -> op: SUB especial?
-				operation <= 6'b100100; // And
+			3'b111:	// Branch BGEZ/BGEZAL
+				operation <= 4'b1000; // And
 
 			default:	// Nao deve ocorrer
 				operation <= 4'b0010;	// Soma

@@ -21,7 +21,8 @@ module mips_uniciclo(
 	wire mem_to_reg; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	wire [1:0] pc_src;
-	wire alu_zero;
+	wire equal;						// Seletor do resultado de alu_zero
+	wire alu_zero;					// Entrada para tomada de decisao do branch
 	
 	
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
@@ -56,13 +57,15 @@ module mips_uniciclo(
 	control_unit control_unit(
 		.opcode(instruction[31:26]),
 		.funct(instruction[5:0]),
+		.rt(instruction[20:16]),
 		.reg_dst(reg_dst),
 		.pc_src(pc_src),
 		.mem_to_reg(mem_to_reg),
 		.opALU(opALU),
 		.write_enable_mem(write_enable_mem),
 		.origALU(origALU),
-		.write_enable_reg(write_enable_reg)
+		.write_enable_reg(write_enable_reg),
+		.equal(equal)
 	);
 	
 	
@@ -127,7 +130,8 @@ module mips_uniciclo(
 		.B(ALUoperand_b), 
 		.operation(ALUoperation),
 		.result(ALUresult),
-		.alu_zero(alu_zero)
+		.alu_zero(alu_zero),
+		.equal(equal)
 	);
 	
 	
