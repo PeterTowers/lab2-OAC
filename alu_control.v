@@ -45,10 +45,10 @@ module alu_control(
 					6'b10_0101: // OR
 						operation <= 4'b0001;
 
-					/* TODO:
 					6'b10_1010: // SLT
-						operation <= 4'b0000;
+						operation <= 4'b1001;
 					
+					/* TODO:
 					6'b00_0011: // SRA
 						operation <= 4'b0000;
 					
@@ -67,10 +67,13 @@ module alu_control(
 					
 					6'b10_0110: // XOR
 						operation <= 4'b1101;
+						
+					default:
+						operation <= 4'b0010;	// Soma
 				endcase
 
-			3'b111:	// Branch BNE -> op: SUB especial?
-				operation <= 6'b100100; // And
+			3'b111:	// Branch BGEZ/BGEZAL
+				operation <= 4'b1000; // Comparacao >= 0
 
 			default:	// Nao deve ocorrer
 				operation <= 4'b0010;	// Soma

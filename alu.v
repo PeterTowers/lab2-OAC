@@ -1,6 +1,7 @@
 module alu (
 	input [31:0] A, B,			// Operandos
 	input [3:0] operation, 		// Operacao
+	input equal,					// Seletor para condicao de branch (igual ou desigual)
 	output reg [31:0] result,	// Resultado
 	output reg alu_zero			// Sinal de controle para branch
 	);
@@ -10,7 +11,7 @@ module alu (
 	end
 	
 	always @(*) begin
-		alu_zero = 0;
+		alu_zero <= 0;
 		
 		case(operation)
 			4'b0000:	// AND
@@ -26,8 +27,9 @@ module alu (
 			4'b0011: // ADDU
 				// OBSERVAÇÃO: O ADDU é simplesmente um add sem teste de overflow.
 				result <= A + B;
-				
-			4'b0110: begin // SUB
+			
+			/* SUB & BEQ/BNE */
+			4'b0110: begin
 				// TODO: Testar overflow
 				result <= A - B;
 				
@@ -39,11 +41,25 @@ module alu (
 				// OBSERVAÇÃO: O SUBU é simplesmente um sub sem teste de overflow.
 				result <= A - B;
 				
-			4'b1000: begin // SUB especial p/ BNE
-				result <= A - B;
-				
-				if (result != 0)	// Para instrucao BNE, result != 0 eh desigualdade
+			/* BGEZ/BGEZAL */
+			4'b1000: begin
+				if (A >= 0)	begin		// BGEZ: branch se rs >= 0
+					result <= 1;
 					alu_zero <= 1'b1;
+				end
+				
+				else begin				// Caso rs < 0, nao faz branch
+					result <= 0;
+					alu_zero <= 0;
+				end
+			end
+			
+			/* SLT */
+			4'b1001: begin
+				if (A < B)
+					result = 1;
+				else
+					result = 0;
 			end
 				
 			4'b1100: // NOR
@@ -60,6 +76,10 @@ module alu (
 				result <= 32'hdeadbeef;	// Assim a gente sabe que deu ruim nesse ponto
 
 		endcase
+		
+		if (!equal)	// Caso para BNE
+			alu_zero <= ~alu_zero;
+		
 	end
 	
 endmodule
