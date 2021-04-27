@@ -14,7 +14,7 @@ module mips_uniciclo_tb;
 	);
 	
 
-	parameter num_cycles = 10;
+	parameter num_cycles = 100;
 	
 	initial begin
 		pc_clock = 1'b0;
