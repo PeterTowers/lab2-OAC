@@ -1,3 +1,4 @@
+`timescale 1ps / 1ps  
 module mips_uniciclo(output testout);
 	
 	wire[31:0] instruction; 	// Sai da memoria de instrucoes e alimenta o controle, o banco de registradores e TODO: Extensao de sinal
@@ -5,7 +6,7 @@ module mips_uniciclo(output testout);
 	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide qual o registrador para escrita.
 	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
 	wire origALU; 					// Fio para decidir se a ALU operador B usa Imediato ou registrador
-	wire [3:0] opALU; 				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
+	wire [3:0] opALU; 			// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
 	wire [5:0] ALUoperation; 	// Escolhe se ULA vai somar, subtrair, etc.
 	wire [31:0] reg_bank_data1, reg_bank_data2; // Sao os valores lidos do banco de registradores
 	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
@@ -18,27 +19,42 @@ module mips_uniciclo(output testout);
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	wire [1:0] pc_src;
 	wire alu_zero;
-	reg clock;
+	reg pc_clock, inst_clock, data_clock, reg_clock;
 	
-	wire [31:0] pc;	// Colocado aqui apenas para garantir uma saida para o modulo do PC (e nao quebrar o restante do programa)
+	wire [31:0] pc;
 	
-	parameter clock_period = 500;	
-	
-	//Fim dos reg temporarios
+
+	parameter num_cycles = 10;
 	
 	initial begin
-		//pc = 0;
-		clock = 1'b0;
-		#(10* clock_period) $stop;
+		pc_clock = 1'b0;
+		inst_clock = 1'b0;
+		data_clock = 1'b0;
+		reg_clock = 1'b0;
 	end
 	
-	always begin	// Sobe e desce o sinal de clock a cada meio periodo
-		#(clock_period/2) clock = ~clock;		
+	always begin	// Sobe e desce o sinal de clock de tempo em tempo.
+		repeat(num_cycles)
+			begin 
+				reg_clock = 1'b0;
+				pc_clock = 1'b1;
+				#50;
+				pc_clock = 1'b0;
+				inst_clock = 1'b1;
+				#250;
+				inst_clock = 1'b0;
+				data_clock = 1'b1;			
+				#250;
+				data_clock = 1'b0;
+				reg_clock = 1'b1;
+				#50;
+			end
+		$stop;
 	end
 
 	// Modulo do PC
 	program_counter p_counter(
-		.clk(clock),
+		.clk(pc_clock),
 		.pc_src(pc_src),						// Sinal de controle p/ branch
 		.alu_zero(alu_zero),					// Sinal de controle caso igual (ou nao: beq/bne)
 		.b_address(sign_extended_imm),	// Endereco do branch
@@ -49,7 +65,7 @@ module mips_uniciclo(output testout);
 	
 	//Banco de Registradores
 	register_bank reg_bank(
-		.clock(clock),
+		.clock(reg_clock),
 		.read_reg1(instruction[25:21]),
 		.read_reg2(instruction[20:16]),
 		.write_reg(reg_dst_write),
@@ -76,7 +92,7 @@ module mips_uniciclo(output testout);
 	//Memoria das instrucoes
 	inst_memory memoria_instrucao(
 		.address(pc[6:0]),
-		.clock(clock),
+		.clock(inst_clock),
 		.data(), 			// Ninguem vai escrever na memoria de instrucoes
 		.wren(1'b0),
 		.q(instruction)
@@ -85,7 +101,7 @@ module mips_uniciclo(output testout);
 	//Memoria de dados
 	data_memory3 memoria_dados(
 		.address(ALUresult[6:0]),
-		.clock(clock),
+		.clock(data_clock),
 		.data(reg_bank_data2),
 		.wren(write_enable_mem),
 		.q(mem_data)

@@ -76,19 +76,10 @@ set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id program_coun
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME program_counter_tb -section_id program_counter_tb
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name SIMULATION_MODE FUNCTIONAL
-set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_simulation
-set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "C:/Users/Avell/Dropbox/_UnB/OAC/lab2-OAC/Waveform.vwf"
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST OFF -section_id eda_simulation
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name EDA_TEST_BENCH_FILE mips_uniciclo.v -section_id mips_uniciclo
-set_global_assignment -name EDA_TEST_BENCH_FILE sign_extender_tb.v -section_id sign_extender_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE alu_tb.v -section_id alu_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE register_bank_tb.v -section_id register_bank_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE alu_tb.v -section_id register_bank_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE mux1_5bits_tb.v -section_id mux1_5bits_tb
-set_global_assignment -name EDA_TEST_BENCH_FILE program_counter_tb.v -section_id program_counter_tb
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name VERILOG_FILE alu.v
 set_global_assignment -name VERILOG_FILE alu_tb.v
 set_global_assignment -name VERILOG_FILE alu_control.v
@@ -108,4 +99,36 @@ set_global_assignment -name QIP_FILE data_memory3.qip
 set_global_assignment -name QIP_FILE inst_memory.qip
 set_global_assignment -name MIF_FILE UnicicloInst.mif
 set_global_assignment -name MIF_FILE UnicicloData.mif
-set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform.vwf
+set_global_assignment -name VECTOR_WAVEFORM_FILE Waveform1.vwf
+set_global_assignment -name VECTOR_OUTPUT_FORMAT VWF
+set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "C:/Users/Avell/Dropbox/_UnB/OAC/lab2-OAC/Waveform1.vwf"
+set_global_assignment -name EDA_TEST_BENCH_FILE mips_uniciclo.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE control_unit.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE inst_memory.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE data_memory_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE sign_extender.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE mux1_5bits.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE register_bank.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE register_bank_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE mux1_32bits.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE program_counter.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE data_memory3.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE alu.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE mux1_5bits_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE program_counter_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE alu_control.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE sign_extender_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE alu_tb.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE instructions_memory.v.bak -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE instructions_memory_tb.v.bak -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE memory_test_tb.v.bak -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE inst_memory_syn.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE data_memory3.qip -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE data_memory3_syn.v -section_id mips_uniciclo
+set_global_assignment -name EDA_TEST_BENCH_FILE sign_extender_tb.v -section_id sign_extender_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE alu_tb.v -section_id alu_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE register_bank_tb.v -section_id register_bank_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE alu_tb.v -section_id register_bank_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE mux1_5bits_tb.v -section_id mux1_5bits_tb
+set_global_assignment -name EDA_TEST_BENCH_FILE program_counter_tb.v -section_id program_counter_tb
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

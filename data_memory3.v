@@ -122,7 +122,7 @@ endmodule
 // Retrieval info: PRIVATE: INIT_TO_SIM_X NUMERIC "0"
 // Retrieval info: PRIVATE: INTENDED_DEVICE_FAMILY STRING "Cyclone II"
 // Retrieval info: PRIVATE: JTAG_ENABLED NUMERIC "0"
-// Retrieval info: PRIVATE: JTAG_ID STRING "DADO"
+// Retrieval info: PRIVATE: JTAG_ID STRING "NONE"
 // Retrieval info: PRIVATE: MAXIMUM_DEPTH NUMERIC "0"
 // Retrieval info: PRIVATE: MIFfilename STRING "UnicicloData.mif"
 // Retrieval info: PRIVATE: NUMWORDS_A NUMERIC "128"
@@ -131,7 +131,7 @@ endmodule
 // Retrieval info: PRIVATE: RegAddr NUMERIC "1"
 // Retrieval info: PRIVATE: RegData NUMERIC "1"
 // Retrieval info: PRIVATE: RegOutput NUMERIC "0"
-// Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "0"
+// Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "1"
 // Retrieval info: PRIVATE: SingleClock NUMERIC "1"
 // Retrieval info: PRIVATE: UseDQRAM NUMERIC "1"
 // Retrieval info: PRIVATE: WRCONTROL_ACLR_A NUMERIC "0"
@@ -169,4 +169,5 @@ endmodule
 // Retrieval info: GEN_FILE: TYPE_NORMAL data_memory3.bsf FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL data_memory3_inst.v FALSE
 // Retrieval info: GEN_FILE: TYPE_NORMAL data_memory3_bb.v FALSE
+// Retrieval info: GEN_FILE: TYPE_NORMAL data_memory3_syn.v TRUE
 // Retrieval info: LIB_FILE: altera_mf
