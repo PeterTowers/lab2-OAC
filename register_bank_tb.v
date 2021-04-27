@@ -19,7 +19,7 @@ module register_bank_tb;
 		.read_data1(read_data1),
 		.read_data2(read_data2)
 	);
-	
+	integer i;
 	
 	task print_pins;
 		begin
@@ -31,6 +31,9 @@ module register_bank_tb;
 			$display ("write_data: %0h", write_data);
 			$display ("read_data1: %0h", read_data1);
 			$display ("read_data2: %0h", read_data2);
+			for(i = 0; i <=31; i = i + 1) begin
+				$display("Register[%0d] = %0d", i , register_bank_tb.test_unit.registers[i]);
+			end
 			$display ("-----------");
 		end
 	endtask
