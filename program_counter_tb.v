@@ -95,6 +95,7 @@ module program_counter_tb;
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
 		test_result(43);	// Branch is set & condition is met, so PC = PC + address*4 = 43
+		#period;
 		
 		alu_zero = 0;				// LO signal from ALU
 		pc_src = 2'b01;			// pc_src is set for jump (j/jal)
@@ -106,7 +107,8 @@ module program_counter_tb;
 		$display("Out: %0d\nBranch address: %0d", pc, b_address);
 		$display("Jump address: %0d\nJump reg. address: %0d", j_address, reg_addr);
 		$display("pc_src: %2b, Alu_zero: %0d", pc_src, alu_zero);
-		test_result(60);	// pc_src is set for jump, so PC = address*4 = 60
+		test_result(15);	// pc_src is set for jump, so PC = address*4 = 60
+		#period;
 		
 		alu_zero = 0;				// LO signal from ALU
 		pc_src = 2'b10;			// pc_src is set for jr/jalr
