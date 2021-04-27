@@ -3,11 +3,12 @@
  * (PC), increasing it at each cycle, branch and jump addresses calculation.
  */
 module program_counter(
-	input		clk, alu_zero,					// Clock & signal from ALU
-	input		[1:0]  pc_src,					// Source signal for PC (j, jr, branch)
-	input    [31:0] b_address, reg_addr,// Branch & register addresses
-	input    [25:0] j_address,				// Jump address
-	output reg	[31:0] pc						// Output bus
+	input	clk, alu_zero,					// Clock & signal from ALU
+	input	[1:0]  pc_src,					// Source signal for PC (j, jr, branch)
+	input [31:0] b_address, reg_addr,// Branch & register addresses
+	input [25:0] j_address,				// Jump address
+	output reg [31:0] pc,				// Output bus
+	output link_addr						// Return address for JAL/JALR
 	);
 	
 	// Starts PC at -1 so its first output value is zero
@@ -26,7 +27,7 @@ module program_counter(
 					
 			2'b01:	// Unconditional absolute jump (j, jal)
 				pc = {pc[31:26], j_address[25:0]};	// PC receives its 4 MSB and the
-																// others come from given adress
+																// others come from given address
 			
 			2'b10:	// Unconditional register-indirect jump (jr, jalr)
 				pc = reg_addr;		// PC is set to received address
