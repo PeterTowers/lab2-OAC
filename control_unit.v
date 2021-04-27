@@ -56,7 +56,7 @@ module control_unit(
 						reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
 						pc_src <= 2'b11;				// PC = PC+1 (nao faz branch ou jump)
 						mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-						opALU <= 3'b110;			// Operacao de soma na ALU
+						opALU <= 3'b110;				// Avaliar campo funct na alu_control
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
