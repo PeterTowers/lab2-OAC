@@ -1,5 +1,8 @@
 `timescale 1ps / 1ps  
-module mips_uniciclo(output testout);
+module mips_uniciclo(
+		input pc_clock, inst_clock, data_clock, reg_clock,
+		output[31:0] ALUresult_out
+	);
 	
 	wire[31:0] instruction; 	// Sai da memoria de instrucoes e alimenta o controle, o banco de registradores e TODO: Extensao de sinal
 	
@@ -19,38 +22,12 @@ module mips_uniciclo(output testout);
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	wire [1:0] pc_src;
 	wire alu_zero;
-	reg pc_clock, inst_clock, data_clock, reg_clock;
+	
 	
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
 	
-
-	parameter num_cycles = 10;
+	assign ALUresult_out = ALUresult;
 	
-	initial begin
-		pc_clock = 1'b0;
-		inst_clock = 1'b0;
-		data_clock = 1'b0;
-		reg_clock = 1'b0;
-	end
-	
-	always begin	// Sobe e desce o sinal de clock de tempo em tempo.
-		repeat(num_cycles)
-			begin 
-				reg_clock = 1'b0;
-				pc_clock = 1'b1;
-				#50;
-				pc_clock = 1'b0;
-				inst_clock = 1'b1;
-				#250;
-				inst_clock = 1'b0;
-				data_clock = 1'b1;			
-				#250;
-				data_clock = 1'b0;
-				reg_clock = 1'b1;
-				#50;
-			end
-		$stop;
-	end
 
 	// Modulo do PC
 	program_counter p_counter(
