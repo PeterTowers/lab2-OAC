@@ -1,10 +1,11 @@
 module control_unit(
 	input[0:5] opcode, funct,		// Campos "opcode" e "funct"
+	
 	output reg [1:0] pc_src,		// Determina a escolha do proximo PC
 	output reg [1:0] reg_dst, 		// Escolhe o reg em que sera salvo P/ instrucao
 											// com 2 eh 0, p/ 3, eh 1, PC eh 2.
 	output reg mem_to_reg,			// Escrita da memoria de dados no banco de reg
-	output reg[3:0] opALU,			// Operacao a ser executada na ALU
+	output reg[2:0] opALU,			// Operacao a ser executada na ALU
 	output reg write_enable_mem,	// Habilita escrita na memoria de dados
 	output reg origALU,				// Origem do 2o operando da ALU
 	output reg write_enable_reg	// Habilita escrita no banco de registradores
@@ -15,7 +16,7 @@ module control_unit(
 		reg_dst = 2'b0;
 		pc_src = 2'b11;				// Indica saida simples (PC+1)
 		mem_to_reg = 1'b0;
-		opALU = 4'b0;
+		opALU = 3'b0;
 		write_enable_mem = 1'b0;
 		origALU = 1'b0;
 		write_enable_reg = 1'b0;
@@ -31,7 +32,7 @@ module control_unit(
 						reg_dst <= 2'd2;				// Instrucao salva pc+1 em $ra
 						pc_src = 2'b10;				// PC = rs
 						mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'bx;					// Nao usa ALU, nao importa
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
@@ -41,7 +42,7 @@ module control_unit(
 						reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
 						pc_src = 2'b10;				// PC = rs
 						mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'bx;					// Nao usa ALU, nao importa
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
 						write_enable_reg <= 1'b0;	// NAO escreve no banco de reg
@@ -52,110 +53,58 @@ module control_unit(
 						reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
 						pc_src <= 2'b11;				// PC = PC+1 (nao faz branch ou jump)
 						mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-						opALU <= funct;				// Operacao de soma na ALU
+						opALU <= 3'b110;			// Operacao de soma na ALU
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-				
-					/*
-					6'b10_0000: begin	// ADD
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b1;					// Operacao de soma na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_0001: begin	// ADDU
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b1;					// Operacao de soma na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_0100: begin	// AND
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b11;				// Operacao AND na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					/* TODO:
 					6'b01_1010: begin	// DIV
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
-					*/
 					
-					/* TODO:
 					6'b01_0000: begin	// MFHI
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					6'b01_0010: begin	// MFLO
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
-					6'b10_0111: begin	// NOR
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao NOR na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_0101: begin	// OR
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b100;				// Operacao OR na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					/* TODO:
 					6'b00_0000: begin	// SLL
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					6'b10_1010: begin	// SLT
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					6'b00_0011: begin	// SRA
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					6'b00_0111: begin	// SRAV
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					
 					6'b00_0010: begin	// SRL
 						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_0010: begin	// SUB
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao de subtracao na ALU - TODO: colocar valor da operacao na atribuicao da variavel
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-
-					6'b10_0011: begin	// SUBU
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao de subtracao na ALU - TODO: colocar valor da operacao na atribuicao da variavel
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_0110: begin	// XOR
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b101;				// Operacao XOR na ALU
+						opALU <= 3'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 					end
 					*/
@@ -169,7 +118,7 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd1;					// Operacao de soma na ALU
+					opALU <= 3'b000;					// Operacao de soma na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1; 				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
@@ -180,10 +129,30 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd3;					// Operacao AND na ALU
+					opALU <= 3'b010;					// Operacao AND na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+				end
+				
+			6'b000100:	// BEQ
+				begin
+					pc_src = 2'b00;				// Branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 3'b001;				// Operacao de subtracao na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
+				end
+				
+			6'b000101:	// BNE
+				begin
+					pc_src = 2'b00;				// Branch
+					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
+					opALU <= 3'b111;				// Operacao de subtracao na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 				end
 				
 			6'b001101:  //ORI //TODO: No manual do MIPS diz que a extensao de sinal no ANDI eh sempre de zeros, porem, na forma atual esta extensao sinalizada.
@@ -191,7 +160,7 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd4;					// Operacao OR na ALU
+					opALU <= 3'b100;					// Operacao OR na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
@@ -202,7 +171,7 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd5;					// Operacao XOR na ALU
+					opALU <= 3'b101;					// Operacao XOR na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
@@ -213,7 +182,7 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd1;					// Operacao de soma na ALU
+					opALU <= 3'b000;					// Operacao de soma na ALU
 					write_enable_mem <= 1'b1;	// Escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
 					write_enable_reg <= 1'd0;	// NAO escreve registrador
@@ -224,7 +193,7 @@ module control_unit(
 					reg_dst <= 2'b0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b1;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd1;					// Operacao de soma na ALU
+					opALU <= 3'b000;					// Operacao de soma na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
@@ -235,7 +204,7 @@ module control_unit(
 					reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'd0;					// Operacao decidida pelo campo funct
+					opALU <= 3'd0;					// Operacao decidida pelo campo funct
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
@@ -248,7 +217,7 @@ module control_unit(
 					reg_dst <= 2'bx;				// Nao escreve bco reg, nao importa
 					pc_src = 2'b01;				// Jump incondicional
 					mem_to_reg <= 1'bx;			// Nao escreve, nao importa
-					opALU <= 4'bx;					// Nao usa ALU, nao importa
+					opALU <= 3'bx;					// Nao usa ALU, nao importa
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx; 				// Nao usa ALU, nao importa
 					write_enable_reg <= 1'b0;	// NAO escreve registrador
@@ -259,7 +228,7 @@ module control_unit(
 					reg_dst <= 2'd2; 				// Instrucao salva pc+1 em $ra
 					pc_src = 2'b01;				// Jump incondicional
 					mem_to_reg <= 1'b0;			// NAO escreve dado da memoria em reg
-					opALU <= 4'bx; 				// Nao usa ALU, nao importa
+					opALU <= 3'bx; 				// Nao usa ALU, nao importa
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx;				// Nao usa ALU, nao importa
 					write_enable_reg <= 1'b1;	// Escreve no banco de registradores
@@ -272,7 +241,7 @@ module control_unit(
 					reg_dst <= 2'd0;
 					pc_src = 2'b11;
 					mem_to_reg <= 1'b0;
-					opALU <= 4'b0; 
+					opALU <= 3'b0; 
 					write_enable_reg <= 1'b0;
 					origALU <= 1'b0;
 					write_enable_mem <= 1'b0; 					

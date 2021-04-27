@@ -6,8 +6,8 @@ module mips_uniciclo(output testout);
 	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide qual o registrador para escrita.
 	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
 	wire origALU; 					// Fio para decidir se a ALU operador B usa Imediato ou registrador
-	wire [3:0] opALU; 			// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
-	wire [5:0] ALUoperation; 	// Escolhe se ULA vai somar, subtrair, etc.
+	wire [2:0] opALU;				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
+	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
 	wire [31:0] reg_bank_data1, reg_bank_data2; // Sao os valores lidos do banco de registradores
 	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
 	wire [31:0] ALUresult; 		//Resultado da ULA
@@ -21,7 +21,7 @@ module mips_uniciclo(output testout);
 	wire alu_zero;
 	reg pc_clock, inst_clock, data_clock, reg_clock;
 	
-	wire [31:0] pc;
+	wire [31:0] pc;				// Program counter - determina a instrucao atual
 	
 
 	parameter num_cycles = 10;
