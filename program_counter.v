@@ -7,8 +7,8 @@ module program_counter(
 	input	[1:0]  pc_src,					// Source signal for PC (j, jr, branch)
 	input [31:0] b_address, reg_addr,// Branch & register addresses
 	input [25:0] j_address,				// Jump address
-	output reg [31:0] pc,				// Output bus
-	output link_addr						// Return address for JAL/JALR
+	output reg [31:0] pc,				// Output bus for PC
+	output reg [31:0] return_address // Return address for JAL/JALR instructions
 	);
 	
 	// Starts PC at -1 so its first output value is zero
@@ -18,7 +18,8 @@ module program_counter(
 
 /*----------------------------------------------------------------------------*/
    always @(posedge clk) begin
-		pc = pc + 1;	// PC always increases by 1
+		pc = pc + 1;					// PC always increases by 1
+		return_address = pc + 1;	// Return address will be the next instruction
 		
 		case (pc_src)
 			2'b00:	// Branch
