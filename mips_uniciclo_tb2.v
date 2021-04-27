@@ -1,6 +1,4 @@
-/*
-
-Esse deve ser o conteudo do UnicicloInst.mif para estes testbench
+/* Esse deve ser o conteudo do UnicicloInst.mif para estes testbench
 
 --------------------------------
 DEPTH = 128;
@@ -30,7 +28,6 @@ module mips_uniciclo_tb2;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
 	wire[31:0] ALUresult_out;
-	
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
@@ -89,7 +86,7 @@ module mips_uniciclo_tb2;
 		input [31:0] expected;
 		begin
 			if (expected == mips_uniciclo_tb2.test_unit.reg_bank.registers[index])
-				$display("$%0d: ok", index);
+				$display("$%0d: ok: %h", index, expected);
 			else
 				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb2.test_unit.reg_bank.registers[index]);
 		end
