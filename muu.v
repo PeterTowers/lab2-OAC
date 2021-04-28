@@ -4,12 +4,12 @@
  * mente, dependendo da operacao.
  */
 /*----------------------------------------------------------------------------*/
-module multiplilcation_unit (
+module muu (
 	input [31:0] rs, rt,		// Operandos
 	input [3:0] operation,	// Operacao - pode ser reduzido p/ 3 bits,
 									// deixando 4 para eventual expansao
-	output div_zero,			// Indica divisao por zero
-	output reg [31:0] out,	// Saida para os 32 bits SUPERIORES [63:32]
+	output reg div_zero,		// Indica divisao por zero
+	output reg [31:0] out	// Saida dos dados
 	);
 	
 	reg [63:0] result;
@@ -20,45 +20,45 @@ module multiplilcation_unit (
 		
 		case(operation)
 			4'b0000: begin	// MUL
-				result <= $signed(rs) * $signed(rt);
+				result = $signed(rs) * $signed(rt);
 				out <= result[31:0];
 			end
 			
 			4'b0001: begin	// MULT
-				result <= $signed(rs) * $signed(rt);
-				hi <= result[64:32];
+				result = $signed(rs) * $signed(rt);
+				hi <= result[63:32];
 				lo <= result[31:0];
 			end
 			
 			4'b0010: begin	// MADD
-				result <= $signed(rs) * $signed(rt);
-				hi <= hi + result[64:32];
-				lo <= lo + result[31:0];
+				result = $signed(rs) * $signed(rt);
+				result = result + {hi, lo};
+				
+				hi <= result[63:32];
+				lo <= result[31:0];
 			end
 			
 			4'b0011: begin	// MSUBU: multip., neste caso, desconsidera sinal
-				result <= rs * rt;
-				hi <= hi - result[64:32];
+				result = rs * rt;
+				hi <= hi - result[63:32];
 				lo <= lo - result[31:0];
 			end
 			
 			4'b0100: begin // DIV
-				if (B != 0) begin
-					lo <= $signed(A) / $signed(B);
-					hi <= $signed(A) % $signed(B);
+				if (rt != 0) begin
+					lo <= $signed(rs) / $signed(rt);
+					hi <= $signed(rs) % $signed(rt);
 				end
 				
-				else begin
-					div_zero = 1'b1;
-				end
-				
+				else
+					div_zero <= 1'b1;
+			end
+			
 			4'b0101:	// MFHI
 				out <= hi;
-			end
 			
 			4'b0110:	// MFLO
 				out <= lo;
-			end
 			
 		endcase
 	end
