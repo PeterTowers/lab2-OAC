@@ -11,7 +11,7 @@ module alu (
 	end
 	
 	always @(*) begin
-		alu_zero = 0;
+		alu_zero <= 0;
 		
 		case(operation)
 			4'b0000:	// AND
@@ -22,7 +22,7 @@ module alu (
 				
 			4'b0010: // ADD
 				// TODO: Testar overflow
-				result <= A + B;
+				result <= $signed(A) + $signed(B);
 				
 			4'b0011: // ADDU
 				result <= A + B;
@@ -30,7 +30,7 @@ module alu (
 			/* SUB & BEQ/BNE */
 			4'b0110: begin
 				// TODO: Testar overflow
-				result <= A - B;
+				result <= $signed(A) - $signed(B);
 				
 				if (A == B)	// Para instrucao BEQ, result == 0 eh igualdade
 					alu_zero <= 1'b1;
@@ -43,18 +43,18 @@ module alu (
 			4'b1000: begin
 				if (A >= 0)	begin		// BGEZ: branch se rs >= 0
 					result <= 1;
-					alu_zero = 1'b1;
+					alu_zero <= 1'b1;
 				end
 				
 				else begin				// Caso rs < 0, nao faz branch
 					result <= 0;
-					alu_zero = 0;
+					alu_zero <= 0;
 				end
 			end
 			
 			/* SLT */
 			4'b1001: begin
-				if (A < B)
+				if ($signed(A) < $signed(B))
 					result = 1;
 				else
 					result = 0;

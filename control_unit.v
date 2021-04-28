@@ -167,7 +167,7 @@ module control_unit(
 					origALU <= 1'd0;				// 2o operando da ALU eh o registrador 2
 					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 					equal <= 1'b1;					// Testa igualdade na ALU
-					signed_imm_extension <= 1'bx; //Don't care imediato
+					signed_imm_extension <= 1'b1; //imediato sinalizado
 				end
 			
 			6'b000001:	// "REGIMM" - BGEZ/BGEZAL
@@ -177,7 +177,7 @@ module control_unit(
 					opALU <= 4'b111;				// Operacao de especial na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
-					
+					equal <= 1'b1;					// Testa igualdade na ALU
 					if (rt == 5'b00001) begin	// BEGEZ
 						reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 						write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
@@ -187,7 +187,7 @@ module control_unit(
 						reg_dst <= 2'd2;				// Instrucao salva pc+1 em $ra
 						write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 					end
-					signed_imm_extension <= 1'bx; //Don't care imediato
+					signed_imm_extension <= 1'b1; //imediato sinalizado
 				end
 			
 			6'b000101:	// BNE
@@ -200,7 +200,7 @@ module control_unit(
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 					equal <= 1'b0;					// Testa desigualdade na ALU
-					signed_imm_extension <= 1'bx; //Don't care imediato
+					signed_imm_extension <= 1'b1; //imediato sinalizado
 				end
 				
 			6'b100011:  //LW
@@ -288,7 +288,7 @@ module control_unit(
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx; 				// Nao usa ALU, nao importa
 					write_enable_reg <= 1'b0;	// NAO escreve registrador
-					signed_imm_extension <= 1'bx; //Don't care imediato
+					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
 				end
 				
 			6'b000011:	// JAL (jump and link)	TODO
@@ -300,7 +300,7 @@ module control_unit(
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx;				// Nao usa ALU, nao importa
 					write_enable_reg <= 1'b1;	// Escreve no banco de registradores
-					signed_imm_extension <= 1'bx; //Don't care imediato
+					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
 				end
 				
 /*----------------------------------------------------------------------------*/

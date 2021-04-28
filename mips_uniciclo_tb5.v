@@ -21,7 +21,7 @@ BEGIN
 END;
 ------------------------------------------------*/
 `timescale 1ps / 1ps  
-module mips_uniciclo_tb3;
+module mips_uniciclo_tb5;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
 	wire[31:0] ALUresult, pc, instruction;
@@ -85,10 +85,10 @@ module mips_uniciclo_tb3;
 		input [4:0] index;
 		input [31:0] expected;
 		begin
-			if (expected == mips_uniciclo_tb3.test_unit.reg_bank.registers[index])
+			if (expected == mips_uniciclo_tb5.test_unit.reg_bank.registers[index])
 				$display("$%0d: ok: %h", index, expected);
 			else
-				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb3.test_unit.reg_bank.registers[index]);
+				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb5.test_unit.reg_bank.registers[index]);
 		end
 	
 	endtask
@@ -117,14 +117,14 @@ module mips_uniciclo_tb3;
 				#50;
 			end
 		test_result_t(
-			32'h_0,
-			32'h_64,
-			32'h_64,
-			32'h_0,
-			32'h_0,
-			32'h_0, 
-			32'h_0,
-			32'h_0
+			32'h_0, 				//$t0
+			32'h_ffffff9c, 	//$t1
+			32'h_64,				//$t2
+			32'h_64,				//$t3
+			32'h_64,				//$t4
+			32'h_0, 				//$t5
+			32'h_0,				//$t6
+			32'h_0				//$t7
 			);
 		
 //		test_result_s(
