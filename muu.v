@@ -61,6 +61,8 @@ module muu (
 			4'b0110:	// MFLO
 				out <= lo;
 			
+			default:	// NO OP
+				;
 		endcase
 	end
 	
