@@ -1,7 +1,8 @@
 `timescale 1ps / 1ps  
 module mips_uniciclo(
 		input pc_clock, inst_clock, data_clock, reg_clock,
-		output[31:0] ALUresult_out, pc_out, instruction_out
+		output[31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a, alu_operand_b,
+		output alu_zero_out
 	);
 	
 	wire[31:0] instruction; 	// Sai da memoria de instrucoes e alimenta o controle, o banco de registradores e TODO: Extensao de sinal
@@ -31,6 +32,9 @@ module mips_uniciclo(
 	assign ALUresult_out = ALUresult;
 	assign pc_out = pc;
 	assign instruction_out = instruction;
+	assign alu_zero_out = alu_zero;
+	assign alu_operand_a = reg_bank_data1;
+	assign alu_operand_b = ALUoperand_b;
 
 	// Modulo do PC
 	program_counter p_counter(
