@@ -24,8 +24,8 @@ END;
 module mips_uniciclo_tb4;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
-	wire[31:0] ALUresult, pc, instruction;
-	
+	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
+	wire alu_zero;
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
@@ -34,7 +34,10 @@ module mips_uniciclo_tb4;
 		.reg_clock(reg_clock),
 		.ALUresult_out(ALUresult),
 		.pc_out(pc),
-		.instruction_out(instruction)
+		.instruction_out(instruction),
+		.alu_zero_out(alu_zero),
+		.alu_operand_a(alu_operand_a),
+		.alu_operand_b(alu_operand_b)
 	);
 	
 	integer i;
@@ -117,14 +120,14 @@ module mips_uniciclo_tb4;
 				#50;
 			end
 		test_result_t(
-			32'h_64,
-			32'h_64,
-			32'h_64,
-			32'h_0,
-			32'h_64,
-			32'h_0, 
-			32'h_0,
-			32'h_0
+			32'h_64,				//$t0
+			32'h_64,				//$t1
+			32'h_64,				//$t2
+			32'h_0,				//$t3
+			32'h_64,				//$t4
+			32'h_0, 				//$t5
+			32'h_0,				//$t6
+			32'h_0				//$t7
 			);
 		
 //		test_result_s(

@@ -146,7 +146,7 @@ module control_unit(
 					reg_write <= 2'bx;			// Nao escreve no bco, nao importa
 					opALU <= 3'b001;				// Operacao de subtracao na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
-					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					origALU <= 1'd0;				// 2o operando da ALU eh o registrador 2
 					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 					equal <= 1'b1;					// Testa igualdade na ALU
 				end
