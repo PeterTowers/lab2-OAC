@@ -9,23 +9,31 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 20090064; % 3: addi $t1, $zero, 100 %
-00000001 : 200a0064; % 4: addi $t2, $zero, 100 %
-00000002 : 112a0001; % 5: beq $t1, $t2, errado1 %
-00000003 : 114a0001; % 6: beq $t2, $t2, certo1 %
-00000004 : 08000006; % 8: j fim1 %
-00000005 : 216b0064; % 10: addi $t3, $t3, 100 %
-00000006 : 15080001; % 12: bne $t0, $t0, errado2 %
-00000007 : 150f0001; % 13: bne $t0, $t7, certo2 %
-00000008 : 0800000a; % 15: j fim2 %
-00000009 : 218c0064; % 17: addi $t4, $t4, 100 %
-0000000a : 0800000b; % 19: j exit %
-0000000b : 21ef0064; % 22: addi $t7, $t7, 100 %
+00000000 : 2008fffe; % 3: addi $t0, $zero, -2 %
+00000001 : 2009000e; % 4: addi $t1, $zero, 14 %
+00000002 : 71095002; % 5: mul $t2, $t0, $t1 %
+00000003 : 00005810; % 7: mfhi $t3 %
+00000004 : 010a0018; % 9: mult $t0, $t2 %
+00000005 : 00006012; % 10: mflo $t4 %
+00000006 : 00006810; % 11: mfhi $t5 %
+00000007 : 718d0000; % 13: madd $t4, $t5 %
+00000008 : 00007012; % 15: mflo $t6 %
+00000009 : 00007810; % 16: mfhi $t7 %
+0000000a : 710e0005; % 18: msubu $t0, $t6 %
+0000000b : 00008012; % 20: mflo $s0 %
+0000000c : 00008810; % 21: mfhi $s1 %
+0000000d : 20120000; % 23: addi $s2, $zero, 0 %
+0000000e : 0248001a; % 25: div $s2, $t0 %
+0000000f : 00009812; % 27: mflo $s3 %
+00000010 : 0000a010; % 28: mfhi $s4 %
+00000011 : 0112001a; % 30: div $t0, $s2 %
+00000012 : 0000a812; % 32: mflo $s5 %
+00000013 : 0000b010; % 33: mfhi $s6 %
 
 END;
 ------------------------------------------------*/
 `timescale 1ps / 1ps  
-module mips_uniciclo_tb3;
+module mips_uniciclo_tb11;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
 	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
@@ -92,10 +100,10 @@ module mips_uniciclo_tb3;
 		input [4:0] index;
 		input [31:0] expected;
 		begin
-			if (expected == mips_uniciclo_tb3.test_unit.reg_bank.registers[index])
+			if (expected == mips_uniciclo_tb11.test_unit.reg_bank.registers[index])
 				$display("$%0d: ok: %h", index, expected);
 			else
-				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb3.test_unit.reg_bank.registers[index]);
+				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb11.test_unit.reg_bank.registers[index]);
 		end
 	
 	endtask
@@ -124,26 +132,26 @@ module mips_uniciclo_tb3;
 				#50;
 			end
 		test_result_t(
-			32'h_0, 	// $t0
-			32'h_64,				// $t1
-			32'h_64,				// $t2
-			32'h_0,				// $t3
-			32'h_0,				// $t4
-			32'h_0, 				// $t5
-			32'h_0,				// $t6
-			32'h_64				// $t7
+			32'h_ffff_ffe4,					//$t0
+			32'h_e,				//$t1
+			32'h_ffff_ffe4,				//$t2
+			32'h_ffff_ffff,			//$t3
+			32'h_38,			//$t4
+			32'h_0, 					//$t5
+			32'h_38,					//$t6
+			32'h_0					//$t7
 			);
 		
-//		test_result_s(
-//			32'h_0,			//$s0
-//			32'h_0,			//$s1
-//			32'h_0,					//$s2
-//			32'h_0,			//$s3
-//			32'h_0,					//$s4
-//			32'h_0, 			//$s5
-//			32'h_0,					//$s6
-//			32'h_0					//$s7
-//			);	
+		test_result_s(
+			32'h_a8,			//$s0
+			32'h_ffffffc8,			//$s1
+			32'h_0,					//$s2
+			32'h_0,			//$s3
+			32'h_0,					//$s4
+			32'h_0, 			//$s5
+			32'h_0,					//$s6
+			32'h_0					//$s7
+			);	
 	end
 	
 endmodule

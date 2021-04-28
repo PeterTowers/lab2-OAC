@@ -15,6 +15,8 @@ module mux1_5bits
 				out <= option_b;
 			2'b10:
 				out <= 5'd31;
+			2'b11:
+				out <= 5'bxxxxx;
 		endcase
 	end
 	 
