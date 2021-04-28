@@ -18,11 +18,12 @@ module mips_uniciclo(
 	wire write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
 	wire write_enable_mem; 		// Se 1, ocorrera uma escrita na memoria de dados na subida do clock.
 	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
-	wire mem_to_reg; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
+	wire [1:0] reg_write; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	wire [1:0] pc_src;
 	wire equal;						// Seletor do resultado de alu_zero
 	wire alu_zero;					// Entrada para tomada de decisao do branch
+	wire [31:0] return_address;// Endereco de retorno para instrucoes como JAL/JALR/etc
 	
 	
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
@@ -39,7 +40,8 @@ module mips_uniciclo(
 		.b_address(sign_extended_imm),	// Endereco do branch
 		.reg_addr(reg_bank_data1),			// Endereco do jump vindo de registrador (jr/jalr)
 		.j_address(instruction[25:0]),	// Endereco do jump incondicional (j/jal)
-		.pc(pc)									// Saida do PC (PC atual)
+		.pc(pc),									// Saida do PC (PC atual)
+		.return_address(return_address)	// Endereco de retorno p/ JAL/JALR/etc
 	);
 	
 	//Banco de Registradores
@@ -61,7 +63,7 @@ module mips_uniciclo(
 		.rt(instruction[20:16]),
 		.reg_dst(reg_dst),
 		.pc_src(pc_src),
-		.mem_to_reg(mem_to_reg),
+		.reg_write(reg_write),
 		.opALU(opALU),
 		.write_enable_mem(write_enable_mem),
 		.origALU(origALU),
@@ -105,10 +107,11 @@ module mips_uniciclo(
 	);
 	
 	//Mux pera escolher se o que vai para a escrita do banco de registradores eh o resultado da ULA ou o dado da Memoria
-	mux1_32bits write_reg_bank_mux(
+	mux2_32bits write_reg_bank_mux(
 		.option_a(ALUresult),
 		.option_b(mem_data),
-		.selector(mem_to_reg),
+		.option_c(return_address),
+		.selector(reg_write),
 		.out(write_on_bank)
 	);
 	
