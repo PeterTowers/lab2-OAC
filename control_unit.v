@@ -183,7 +183,7 @@ module control_unit(
 						write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 					end
 					
-					else begin						// BEGEZAL
+					else begin						// BGEZAL
 						reg_dst <= 2'd2;				// Instrucao salva pc+1 em $ra
 						write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 					end
@@ -195,9 +195,9 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b00;				// Branch
 					reg_write <= 2'bx;			// Nao escreve no bco, nao importa
-					opALU <= 4'b001;				// Operacao de subtracao na ALU
+					opALU <= 4'b0001;				// Operacao de subtracao na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
-					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					origALU <= 1'd0;				// 2o operando da ALU eh o 2o registrador
 					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
 					equal <= 1'b0;					// Testa desigualdade na ALU
 					signed_imm_extension <= 1'b1; //imediato sinalizado
