@@ -27,6 +27,9 @@ module mips_uniciclo(
 	wire [31:0] return_address;// Endereco de retorno para instrucoes como JAL/JALR/etc
 	wire signed_imm_extension;
 	
+	wire [31:0] memory_in;		// Fio que do que será escrito na memória. Filtrado para ser Word ou Byte.
+	wire [31:0] memory_out;		// Fio que do que foi lido da memória. Filtrado para ser Word ou Byte.
+	wire memory_byte_filter;
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
 	
 	assign ALUresult_out = ALUresult;
@@ -73,7 +76,8 @@ module mips_uniciclo(
 		.origALU(origALU),
 		.write_enable_reg(write_enable_reg),
 		.equal(equal),
-		.signed_imm_extension(signed_imm_extension)
+		.signed_imm_extension(signed_imm_extension),
+		.mem_byte_mode(memory_byte_filter)
 	);
 	
 	
@@ -86,13 +90,25 @@ module mips_uniciclo(
 		.q(instruction)
 	);
 	
+	byte_filter mem_byte_filter_in(
+		.in (reg_bank_data2),
+		.filter_enable(memory_byte_filter),
+		.out(memory_in)	
+	);
+	
 	//Memoria de dados
 	data_memory3 memoria_dados(
 		.address(ALUresult[6:0]),
 		.clock(data_clock),
-		.data(reg_bank_data2),
+		.data(memory_in),
 		.wren(write_enable_mem),
 		.q(mem_data)
+	);
+	
+	byte_filter mem_byte_filter_out(
+		.in (mem_data),
+		.filter_enable(memory_byte_filter),
+		.out(memory_out)	
 	);
 	
 	//Mux para escolher qual vai ser o registrador de escrita.
@@ -114,7 +130,7 @@ module mips_uniciclo(
 	//Mux pera escolher se o que vai para a escrita do banco de registradores eh o resultado da ULA ou o dado da Memoria
 	mux2_32bits write_reg_bank_mux(
 		.option_a(ALUresult),
-		.option_b(mem_data),
+		.option_b(memory_out),
 		.option_c(return_address),
 		.selector(reg_write),
 		.out(write_on_bank)
