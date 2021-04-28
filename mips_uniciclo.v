@@ -1,6 +1,6 @@
 `timescale 1ps / 1ps  
 module mips_uniciclo(
-		input pc_clock, inst_clock, data_clock, reg_clock,
+		input pc_clock, inst_clock, data_clock, reg_clock, muu_clock,
 		output[31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a, alu_operand_b,
 		output alu_zero_out
 	);
@@ -39,8 +39,8 @@ module mips_uniciclo(
 	wire [1:0]  pc_src;			// Seletor p/ proximo valor de PC
 
 	/* Conexoes do filtro Word-Byte */
-	wire [31:0] memory_in;		// Fio que do que será escrito na memória. Filtrado para ser Word ou Byte.
-	wire [31:0] memory_out;		// Fio que do que foi lido da memória. Filtrado para ser Word ou Byte.
+	wire [31:0] memory_in;		// Fio que do que sera escrito na memoria. Filtrado para ser Word ou Byte.
+	wire [31:0] memory_out;		// Fio que do que foi lido da memoria. Filtrado para ser Word ou Byte.
 	wire memory_byte_filter;
 	
 	
@@ -56,7 +56,7 @@ module mips_uniciclo(
 		.clk(pc_clock),
 		.pc_src(pc_src),						// Sinal de controle p/ branch
 		.alu_zero(alu_zero),					// Sinal de controle caso igual (ou nao: beq/bne)
-		.b_address(extended_imm),	// Endereco do branch
+		.b_address(extended_imm),			// Endereco do branch
 		.reg_addr(reg_bank_data1),			// Endereco do jump vindo de registrador (jr/jalr)
 		.j_address(instruction[25:0]),	// Endereco do jump incondicional (j/jal)
 		.pc(pc),									// Saida do PC (PC atual)
@@ -143,9 +143,9 @@ module mips_uniciclo(
 	// Mux para escolher se o que vai para a escrita do banco de registradores eh
 	mux2_32bits write_reg_bank_mux(	// o ALU, memoria, return address ou MUU
 		.option_a(ALUresult),		// Resultado da ALU
-		.option_b(mem_data),			// Dado da memória
+		.option_b(mem_data),			// Dado da memoria
 		.option_c(return_address),	// Return address (JAL/JALR)
-		.option_d(muu_result),		// Resutado da Unidade Multiplicadora
+		.option_d(muu_out),			// Resutado da Unidade Multiplicadora
 		.selector(reg_write),		// Seletor
 		.out(write_on_bank)			// Saida
 	);
@@ -176,10 +176,11 @@ module mips_uniciclo(
 	
 	// Unidade Multiplicadora - MUU
 	muu multp_unit(
+		.clk(muu_clock),
 		.rs(reg_bank_data1),
-		.rt(ALU_operand_b),
+		.rt(ALUoperand_b),
 		.operation(muu_op),
-		.out(muu_result),
+		.out(muu_out),
 		.div_zero(muu_div_zero)
 	);
 	
