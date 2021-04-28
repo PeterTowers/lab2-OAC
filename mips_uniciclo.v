@@ -10,12 +10,12 @@ module mips_uniciclo(
 	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide qual o registrador para escrita.
 	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
 	wire origALU; 					// Fio para decidir se a ALU operador B usa Imediato ou registrador
-	wire [2:0] opALU;				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
+	wire [3:0] opALU;				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
 	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
 	wire [31:0] reg_bank_data1, reg_bank_data2; // Sao os valores lidos do banco de registradores
 	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
 	wire [31:0] ALUresult; 		//Resultado da ULA
-	wire [31:0] sign_extended_imm; // Imediato com sinal extendido.
+	wire [31:0] extended_imm; // Imediato com sinal extendido.
 	wire write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
 	wire write_enable_mem; 		// Se 1, ocorrera uma escrita na memoria de dados na subida do clock.
 	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
@@ -25,7 +25,7 @@ module mips_uniciclo(
 	wire equal;						// Seletor do resultado de alu_zero
 	wire alu_zero;					// Entrada para tomada de decisao do branch
 	wire [31:0] return_address;// Endereco de retorno para instrucoes como JAL/JALR/etc
-	
+	wire signed_imm_extension;
 	
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
 	
@@ -41,7 +41,7 @@ module mips_uniciclo(
 		.clk(pc_clock),
 		.pc_src(pc_src),						// Sinal de controle p/ branch
 		.alu_zero(alu_zero),					// Sinal de controle caso igual (ou nao: beq/bne)
-		.b_address(sign_extended_imm),	// Endereco do branch
+		.b_address(extended_imm),	// Endereco do branch
 		.reg_addr(reg_bank_data1),			// Endereco do jump vindo de registrador (jr/jalr)
 		.j_address(instruction[25:0]),	// Endereco do jump incondicional (j/jal)
 		.pc(pc),									// Saida do PC (PC atual)
@@ -72,7 +72,8 @@ module mips_uniciclo(
 		.write_enable_mem(write_enable_mem),
 		.origALU(origALU),
 		.write_enable_reg(write_enable_reg),
-		.equal(equal)
+		.equal(equal),
+		.signed_imm_extension(signed_imm_extension)
 	);
 	
 	
@@ -105,7 +106,7 @@ module mips_uniciclo(
 	//Mux para escolher se a ULA recebe em B um imediato ou o se recebe o segundo valor do Banco de Registradores
 	mux1_32bits immediate_reg2_mux(
 		.option_a(reg_bank_data2),
-		.option_b(sign_extended_imm),
+		.option_b(extended_imm),
 		.selector(origALU),
 		.out(ALUoperand_b)
 	);
@@ -122,7 +123,8 @@ module mips_uniciclo(
 	//Extensor de Sinal
 	sign_extender sign_extender(
 		.unextended(instruction[15:0]),
-		.extended(sign_extended_imm)
+		.signed_imm_extension(signed_imm_extension),
+		.extended(extended_imm)
 	);
 	
 	//Controle da ULA
