@@ -11,7 +11,7 @@ module alu (
 	end
 	
 	always @(*) begin
-		alu_zero <= 0;
+		alu_zero = 0;
 		
 		case(operation)
 			4'b0000:	// AND
@@ -34,7 +34,7 @@ module alu (
 				result <= A - B;
 				
 				if (result == 0)	// Para instrucao BEQ, result == 0 eh igualdade
-					alu_zero <= 1'b1;
+					alu_zero = 1'b1;
 			end
 			
 			4'b0111: // SUBU
@@ -45,12 +45,12 @@ module alu (
 			4'b1000: begin
 				if (A >= 0)	begin		// BGEZ: branch se rs >= 0
 					result <= 1;
-					alu_zero <= 1'b1;
+					alu_zero = 1'b1;
 				end
 				
 				else begin				// Caso rs < 0, nao faz branch
 					result <= 0;
-					alu_zero <= 0;
+					alu_zero = 0;
 				end
 			end
 			
