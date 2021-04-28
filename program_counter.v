@@ -24,7 +24,7 @@ module program_counter(
 		case (pc_src)
 			2'b00:	// Branch
 				if (alu_zero)
-					pc = pc + (b_address << 2);	// Shift left as per how it's implemented
+					pc = pc + b_address;
 					
 			2'b01:	// Unconditional absolute jump (j, jal)
 				pc = {pc[31:26], j_address[25:0]};	// PC receives its 4 MSB and the
