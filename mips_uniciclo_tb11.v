@@ -9,33 +9,33 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 2008fffe; % 3: addi $t0, $zero, -2 %
-00000001 : 2009000e; % 4: addi $t1, $zero, 14 %
-00000002 : 71095002; % 5: mul $t2, $t0, $t1 %
-00000003 : 00005810; % 7: mfhi $t3 %
-00000004 : 010a0018; % 9: mult $t0, $t2 %
-00000005 : 00006012; % 10: mflo $t4 %
-00000006 : 00006810; % 11: mfhi $t5 %
-00000007 : 718d0000; % 13: madd $t4, $t5 %
-00000008 : 00007012; % 15: mflo $t6 %
-00000009 : 00007810; % 16: mfhi $t7 %
-0000000a : 710e0005; % 18: msubu $t0, $t6 %
-0000000b : 00008012; % 20: mflo $s0 %
-0000000c : 00008810; % 21: mfhi $s1 %
-0000000d : 20120000; % 23: addi $s2, $zero, 0 %
-0000000e : 0248001a; % 25: div $s2, $t0 %
-0000000f : 00009812; % 27: mflo $s3 %
-00000010 : 0000a010; % 28: mfhi $s4 %
-00000011 : 0112001a; % 30: div $t0, $s2 %
-00000012 : 0000a812; % 32: mflo $s5 %
-00000013 : 0000b010; % 33: mfhi $s6 %
+00000000 : 2008fffe; % 3: addi $t0, $zero, -2 %	t0 = -2  (ffff_fffe)
+00000001 : 2009000e; % 4: addi $t1, $zero, 14 %	t1 = 14  (0000_000e)
+00000002 : 71095002; % 5: mul $t2, $t0, $t1 %	t2 = -28 (ffff_ffe4)
+00000003 : 00005810; % 7: mfhi $t3 %				t3 = 0
+00000004 : 010a0018; % 9: mult $t0, $t2 %			NO OP
+00000005 : 00006012; % 10: mflo $t4 %				t4 = -28	(ffff_ffe4)
+00000006 : 00006810; % 11: mfhi $t5 %				t5 = -1	(ffff_ffff)
+00000007 : 718d0000; % 13: madd $t4, $t5 %		t4*t5 = 28 LO = 0 HI = -1
+00000008 : 00007012; % 15: mflo $t6 %				t6 = 0
+00000009 : 00007810; % 16: mfhi $t7 %				t7 = -1	(ffff_ffff)
+0000000a : 710e0005; % 18: msubu $t0, $t6 %		t0*t6 = 0, LO = 0 HI = -1
+0000000b : 00008012; % 20: mflo $s0 %				s0 = 0
+0000000c : 00008810; % 21: mfhi $s1 %				s1 = -1	(ffff_ffff)
+0000000d : 20120000; % 23: addi $s2, $zero, 0 %	s2 = 0
+0000000e : 0248001a; % 25: div $s2, $t0 %			s2/t0 = 0 = LO, HI = 0
+0000000f : 00009812; % 27: mflo $s3 %				s3 = 0
+00000010 : 0000a010; % 28: mfhi $s4 %				s4 = 0
+00000011 : 0112001a; % 30: div $t0, $s2 %			t0/s2 = 0 (mantem resultados anteriores)
+00000012 : 0000a812; % 32: mflo $s5 %				s5 = 0
+00000013 : 0000b010; % 33: mfhi $s6 %				s6 = 0
 
 END;
 ------------------------------------------------*/
 `timescale 1ps / 1ps  
 module mips_uniciclo_tb11;
 
-	reg pc_clock, inst_clock, data_clock, reg_clock;
+	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
 	wire alu_zero;
 	
@@ -44,6 +44,7 @@ module mips_uniciclo_tb11;
 		.inst_clock(inst_clock),
 		.data_clock(data_clock),
 		.reg_clock(reg_clock),
+		.muu_clock(muu_clock),
 		.ALUresult_out(ALUresult),
 		.pc_out(pc),
 		.instruction_out(instruction),
@@ -113,6 +114,7 @@ module mips_uniciclo_tb11;
 		inst_clock = 1'b0;
 		data_clock = 1'b0;
 		reg_clock = 1'b0;
+		muu_clock = 1'b0;
 	end
 	
 	initial begin	// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
@@ -132,25 +134,25 @@ module mips_uniciclo_tb11;
 				#50;
 			end
 		test_result_t(
-			32'h_ffff_ffe4,					//$t0
+			32'h_ffff_fffe,	//$t0
 			32'h_e,				//$t1
-			32'h_ffff_ffe4,				//$t2
-			32'h_ffff_ffff,			//$t3
-			32'h_38,			//$t4
-			32'h_0, 					//$t5
-			32'h_38,					//$t6
-			32'h_0					//$t7
+			32'h_ffff_ffe4,	//$t2
+			32'h_0,				//$t3
+			32'h_ffff_ffe4,	//$t4
+			32'h_ffff_ffff,	//$t5
+			32'h_0,				//$t6
+			32'h_ffff_ffff		//$t7
 			);
 		
 		test_result_s(
-			32'h_a8,			//$s0
-			32'h_ffffffc8,			//$s1
-			32'h_0,					//$s2
+			32'h_0,			//$s0
+			32'h_ffff_ffff,//$s1
+			32'h_0,			//$s2
 			32'h_0,			//$s3
-			32'h_0,					//$s4
+			32'h_0,			//$s4
 			32'h_0, 			//$s5
-			32'h_0,					//$s6
-			32'h_0					//$s7
+			32'h_0,			//$s6
+			32'h_0			//$s7
 			);	
 	end
 	
