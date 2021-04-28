@@ -25,7 +25,7 @@ module alu (
 				result <= A + B;
 				
 			4'b0011: // ADDU
-				// OBSERVAÇÃO: O ADDU é simplesmente um add sem teste de overflow.
+				// OBSERVAÃ‡ÃƒO: O ADDU Ã© simplesmente um add sem teste de overflow.
 				result <= A + B;
 			
 			/* SUB & BEQ/BNE */
@@ -33,12 +33,12 @@ module alu (
 				// TODO: Testar overflow
 				result <= A - B;
 				
-				if (result == 0)	// Para instrucao BEQ, result == 0 eh igualdade
+				if (A == B)	// Para instrucao BEQ, result == 0 eh igualdade
 					alu_zero <= 1'b1;
 			end
 			
 			4'b0111: // SUBU
-				// OBSERVAÇÃO: O SUBU é simplesmente um sub sem teste de overflow.
+				// OBSERVAÃ‡ÃƒO: O SUBU Ã© simplesmente um sub sem teste de overflow.
 				result <= A - B;
 				
 			/* BGEZ/BGEZAL */
