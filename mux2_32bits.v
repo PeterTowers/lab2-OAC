@@ -18,6 +18,8 @@ module mux2_32bits
 				
 			2'b10:
 				out <= option_c;
+			2'b11:
+				out <= 32'hxxxxxxx;
 		endcase
 	end
 	 
