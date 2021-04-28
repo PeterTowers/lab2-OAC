@@ -77,31 +77,11 @@ set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_s
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
-set_global_assignment -name VERILOG_FILE alu.v
-set_global_assignment -name VERILOG_FILE alu_tb.v
-set_global_assignment -name VERILOG_FILE alu_control.v
-set_global_assignment -name VERILOG_FILE control_unit.v
-set_global_assignment -name VERILOG_FILE instructions_memory.v
-set_global_assignment -name VERILOG_FILE mips_uniciclo.v
-set_global_assignment -name VERILOG_FILE mux1_5bits.v
-set_global_assignment -name VERILOG_FILE mux1_5bits_tb.v
-set_global_assignment -name VERILOG_FILE mux1_32bits.v
-set_global_assignment -name VERILOG_FILE program_counter.v
-set_global_assignment -name VERILOG_TEST_BENCH_FILE program_counter_tb.v
-set_global_assignment -name VERILOG_FILE register_bank.v
-set_global_assignment -name VERILOG_FILE register_bank_tb.v
-set_global_assignment -name VERILOG_FILE sign_extender.v
-set_global_assignment -name VERILOG_FILE sign_extender_tb.v
-set_global_assignment -name QIP_FILE data_memory3.qip
-set_global_assignment -name QIP_FILE inst_memory.qip
-set_global_assignment -name MIF_FILE UnicicloInst.mif
-set_global_assignment -name MIF_FILE UnicicloData.mif
 set_global_assignment -name VECTOR_OUTPUT_FORMAT VWF
 set_global_assignment -name EDA_TEST_BENCH_NAME mips_uniciclo_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mips_uniciclo_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mips_uniciclo_tb -section_id mips_uniciclo_tb
 set_global_assignment -name INCREMENTAL_VECTOR_INPUT_SOURCE "C:/Users/Avell/Dropbox/_UnB/OAC/lab2-OAC/Waveform.vwf"
-set_global_assignment -name VERILOG_FILE mips_uniciclo_tb2.v
 set_global_assignment -name EDA_TEST_BENCH_NAME mips_uniciclo_tb2 -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mips_uniciclo_tb2
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mips_uniciclo_tb2 -section_id mips_uniciclo_tb2
@@ -137,3 +117,24 @@ set_global_assignment -name EDA_TEST_BENCH_FILE data_memory3_syn.v -section_id m
 set_global_assignment -name EDA_TEST_BENCH_FILE mips_uniciclo_tb.v -section_id mips_uniciclo_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE mips_uniciclo_tb2.v -section_id mips_uniciclo_tb2
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE alu.v
+set_global_assignment -name VERILOG_FILE alu_tb.v
+set_global_assignment -name VERILOG_FILE alu_control.v
+set_global_assignment -name VERILOG_FILE control_unit.v
+set_global_assignment -name VERILOG_FILE instructions_memory.v
+set_global_assignment -name VERILOG_FILE mips_uniciclo.v
+set_global_assignment -name VERILOG_FILE muu.v
+set_global_assignment -name VERILOG_FILE mux1_5bits.v
+set_global_assignment -name VERILOG_FILE mux1_5bits_tb.v
+set_global_assignment -name VERILOG_FILE mux1_32bits.v
+set_global_assignment -name VERILOG_FILE program_counter.v
+set_global_assignment -name VERILOG_TEST_BENCH_FILE program_counter_tb.v
+set_global_assignment -name VERILOG_FILE register_bank.v
+set_global_assignment -name VERILOG_FILE register_bank_tb.v
+set_global_assignment -name VERILOG_FILE sign_extender.v
+set_global_assignment -name VERILOG_FILE sign_extender_tb.v
+set_global_assignment -name QIP_FILE data_memory3.qip
+set_global_assignment -name QIP_FILE inst_memory.qip
+set_global_assignment -name MIF_FILE UnicicloInst.mif
+set_global_assignment -name MIF_FILE UnicicloData.mif
+set_global_assignment -name VERILOG_FILE mips_uniciclo_tb2.v
