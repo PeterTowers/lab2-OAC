@@ -60,32 +60,21 @@ module control_unit(
 					default: begin
 						reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
 						pc_src <= 2'b11;				// PC = PC+1 (nao faz branch ou jump)
-						reg_write <= 2'b00;			// Escreve resultado da ALU no banco
+						
 						opALU <= 4'b110;				// Avaliar campo funct na alu_control
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
 						signed_imm_extension <= 1'bx; //Don't care imediato
+						
+						if (funct < 6'b100000) 		// Operacoes na MUU
+							reg_write <= 2'b11;		// Escreve resultado da MUU no banco
+							
+						else								// Operacoes na ALU
+							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
 					end
 					
 					/* TODO:
-					6'b01_1010: begin	// DIV
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b01_0000: begin	// MFHI
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b01_0010: begin	// MFLO
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
 					
 					6'b00_0000: begin	// SLL
 						pc_src = 2'b11;				// PC = PC+1
@@ -119,6 +108,20 @@ module control_unit(
 					*/
 				endcase
 			end
+			
+			/* Instrucoes tipo SPECIAL - semelhantes a tipo-R */	
+				
+			6'b011100:  //MUL, MADD, MSUBU
+				begin
+					reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
+					pc_src = 2'b11;				// PC = PC+1
+					reg_write <= 2'b11;			// Escreve resultado da MUU no banco
+					opALU <= 4'dx;					// NAO opera na ALU, nao importa
+					write_enable_mem <= 1'b1;	// NAO escreve na memoria
+					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
+					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					signed_imm_extension <= 1'bx; //Don't care imediato
+				end
 
 /*----------------------------------------------------------------------------*/
 			/* Instrucoes tipo I */				
@@ -177,6 +180,7 @@ module control_unit(
 					opALU <= 4'b111;				// Operacao de especial na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					signed_imm_extension <= 1'bx; //Don't care imediato
 					
 					if (rt == 5'b00001) begin	// BEGEZ
 						reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
@@ -187,7 +191,6 @@ module control_unit(
 						reg_dst <= 2'd2;				// Instrucao salva pc+1 em $ra
 						write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 					end
-					signed_imm_extension <= 1'bx; //Don't care imediato
 				end
 			
 			6'b000101:	// BNE
@@ -264,18 +267,6 @@ module control_unit(
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
 				end
-			
-			6'b011100:  //MUL - SPECIAL2
-				begin
-					reg_dst <= 2'd1;				// Temos 3 registradores nesse caso
-					pc_src = 2'b11;				// PC = PC+1
-					reg_write <= 2'b00;			// Escreve resultado da ALU no banco
-					opALU <= 4'd0;					// Operacao decidida pelo campo funct
-					write_enable_mem <= 1'b0;	// NAO escreve na memoria
-					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
-					signed_imm_extension <= 1'bx; //Don't care imediato
-				end
 				
 /*----------------------------------------------------------------------------*/
 			/* Instrucoes tipo J */
@@ -307,13 +298,14 @@ module control_unit(
 			/* DEFAULT */
 			default:
 				begin
-					reg_dst <= 2'd0;
-					pc_src = 2'b11;
-					reg_write <= 2'b00;
-					opALU <= 4'b0; 
-					write_enable_reg <= 1'b0;
-					origALU <= 1'b0;
-					write_enable_mem <= 1'b0; 					
+					reg_dst <= 2'dx;				// Nao escreve bco reg, nao importa
+					pc_src = 2'b11;				// Padrao PC+1
+					reg_write <= 2'bx;			// Nao escreve no bco, nao importa
+					opALU <= 4'b0;					// Nao usa ALU, nao importa
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'b0;				// Nao usa ALU, nao importa
+					write_enable_reg <= 1'b0;	// NAO escreve registrador
+					signed_imm_extension <= 1'bx; //Don't care imediato
 				end
 		endcase
 	end

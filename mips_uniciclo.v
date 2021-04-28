@@ -21,13 +21,23 @@ module mips_uniciclo(
 	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
 	wire [1:0] reg_write; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
-	wire [1:0] pc_src;
+	
 	wire equal;						// Seletor do resultado de alu_zero
 	wire alu_zero;					// Entrada para tomada de decisao do branch
-	wire [31:0] return_address;// Endereco de retorno para instrucoes como JAL/JALR/etc
+	
 	wire signed_imm_extension;
 	
+	/* Conexoes da Unidade Multiplicadora */
+	wire [3:0] muu_op;			// Operacao a ser executada na MUU
+	wire [31:0] muu_out;			// Saida dos resultados da MUU
+	wire muu_div_zero;			// Sinaliza divisao por zero
+	wire muu_write_enable;		// Sinaliza se a operacao na MUU escreve registrador
+	
+	/* Conexoes do modulo do Program Counter */
 	wire [31:0] pc;				// Program counter - determina a instrucao atual
+	wire [31:0] return_address;// Endereco de retorno para instrucoes como JAL/JALR/etc
+	wire [1:0]  pc_src;			// Seletor p/ proximo valor de PC
+	
 	
 	assign ALUresult_out = ALUresult;
 	assign pc_out = pc;
@@ -48,13 +58,14 @@ module mips_uniciclo(
 		.return_address(return_address)	// Endereco de retorno p/ JAL/JALR/etc
 	);
 	
-	//Banco de Registradores
+	// Banco de Registradores
 	register_bank reg_bank(
 		.clock(reg_clock),
 		.read_reg1(instruction[25:21]),
 		.read_reg2(instruction[20:16]),
 		.write_reg(reg_dst_write),
 		.write_enable(write_enable_reg),
+		.muu_write_enable(muu_write_enable),
 		.write_data(write_on_bank),
 		.read_data1(reg_bank_data1), 
 		.read_data2(reg_bank_data2)
@@ -110,14 +121,15 @@ module mips_uniciclo(
 		.selector(origALU),
 		.out(ALUoperand_b)
 	);
-	
-	//Mux pera escolher se o que vai para a escrita do banco de registradores eh o resultado da ULA ou o dado da Memoria
-	mux2_32bits write_reg_bank_mux(
-		.option_a(ALUresult),
-		.option_b(mem_data),
-		.option_c(return_address),
-		.selector(reg_write),
-		.out(write_on_bank)
+
+	// Mux para escolher se o que vai para a escrita do banco de registradores eh
+	mux2_32bits write_reg_bank_mux(	// o ALU, memoria, return address ou MUU
+		.option_a(ALUresult),		// Resultado da ALU
+		.option_b(mem_data),			// Dado da memória
+		.option_c(return_address),	// Return address (JAL/JALR)
+		.option_d(muu_result),		// Resutado da Unidade Multiplicadora
+		.selector(reg_write),		// Seletor
+		.out(write_on_bank)			// Saida
 	);
 	
 	//Extensor de Sinal
@@ -142,6 +154,22 @@ module mips_uniciclo(
 		.result(ALUresult),
 		.alu_zero(alu_zero),
 		.equal(equal)
+	);
+	
+	// Unidade Multiplicadora - MUU
+	muu multp_unit(
+		.rs(reg_bank_data1),
+		.rt(ALU_operand_b),
+		.operation(muu_op),
+		.out(muu_result),
+		.div_zero(muu_div_zero)
+	);
+	
+	// Controle da Unidade Multiplicadora
+	muu_control MUU_controller(
+		.funct(instruction[5:0]),
+		.operation(muu_op),
+		.muu_write_enable(muu_write_enable)
 	);
 	
 	
