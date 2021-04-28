@@ -33,7 +33,15 @@ module alu (
 				result <= $signed(A) - $signed(B);
 				
 				if ($signed(A) == $signed(B))	// Para instrucao BEQ, result == 0 eh igualdade
-					alu_zero <= 1'b1;
+					if (equal)	
+						alu_zero <= 1'b1;
+					else // Caso para BNE
+						alu_zero <= 1'b0;
+				else
+					if (equal)	
+						alu_zero <= 1'b0;
+					else // Caso para BNE
+						alu_zero <= 1'b1;
 			end
 			
 			4'b0111: // SUBU				
@@ -78,8 +86,7 @@ module alu (
 
 		endcase
 		
-		if (!equal)	// Caso para BNE
-			alu_zero <= ~alu_zero;
+		
 		
 	end
 	
