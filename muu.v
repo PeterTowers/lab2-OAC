@@ -5,6 +5,7 @@
  */
 /*----------------------------------------------------------------------------*/
 module muu (
+	input clk,					// Clock
 	input [31:0] rs, rt,		// Operandos
 	input [3:0] operation,	// Operacao - pode ser reduzido p/ 3 bits,
 									// deixando 4 para eventual expansao
@@ -15,7 +16,7 @@ module muu (
 	reg [63:0] result;
 	reg [31:0] hi, lo;
 	
-	always @(*) begin
+	always @(posedge clk) begin
 		div_zero <= 0;
 		
 		case(operation)
