@@ -25,7 +25,6 @@ module alu (
 				result <= A + B;
 				
 			4'b0011: // ADDU
-				// OBSERVAÃ‡ÃƒO: O ADDU Ã© simplesmente um add sem teste de overflow.
 				result <= A + B;
 			
 			/* SUB & BEQ/BNE */
@@ -37,8 +36,7 @@ module alu (
 					alu_zero <= 1'b1;
 			end
 			
-			4'b0111: // SUBU
-				// OBSERVAÃ‡ÃƒO: O SUBU Ã© simplesmente um sub sem teste de overflow.
+			4'b0111: // SUBU				
 				result <= A - B;
 				
 			/* BGEZ/BGEZAL */
@@ -67,6 +65,9 @@ module alu (
 				
 			4'b1101: // XOR
 				result <= A ^ B;
+				
+			4'b1111: // LUI: B tem que ser os 16-bits superiores.
+				result <= (B << 16);
 			/*	
 			6'b000010: // MUL	-> MUL e DIV tem hardware especifico para eles
 				result <= A * B;	// E o resultado de MUL pode ter 64 bits
