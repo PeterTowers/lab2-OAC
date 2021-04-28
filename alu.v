@@ -32,7 +32,7 @@ module alu (
 				// TODO: Testar overflow
 				result <= $signed(A) - $signed(B);
 				
-				if (A == B)	// Para instrucao BEQ, result == 0 eh igualdade
+				if ($signed(A) == $signed(B))	// Para instrucao BEQ, result == 0 eh igualdade
 					alu_zero <= 1'b1;
 			end
 			
@@ -41,7 +41,7 @@ module alu (
 				
 			/* BGEZ/BGEZAL */
 			4'b1000: begin
-				if (A >= 0)	begin		// BGEZ: branch se rs >= 0
+				if ($signed(A) >= 0)	begin		// BGEZ: branch se rs >= 0
 					result <= 1;
 					alu_zero <= 1'b1;
 				end

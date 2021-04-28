@@ -174,7 +174,7 @@ module control_unit(
 				begin
 					pc_src = 2'b00;				// Branch
 					reg_write <= 2'b10;			// Qnd escreve bco, escreve return address
-					opALU <= 4'b111;				// Operacao de especial na ALU
+					opALU <= 4'b0111;				// Operacao de especial na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					equal <= 1'b1;					// Testa igualdade na ALU
