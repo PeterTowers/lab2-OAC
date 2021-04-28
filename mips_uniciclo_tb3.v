@@ -1,5 +1,5 @@
 /*
-Esse deve ser o conteudo do UnicicloInst.mif para estes testbench
+Esse deve ser o conteudo do UnicicloInst.mif para este testbench
 
 --------------------------------
 DEPTH = 128;
@@ -9,14 +9,18 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 21080064; % 3: addi $t0, $t0, 100 %
-00000001 : 21290064; % 4: addi $t1, $t1, 100 %
-00000002 : 11090002; % 6: beq $t0, $t1, certo1 %
-00000003 : 214aff9c; % 8: errado1: addi $t2, $t2, -100 %        
-00000004 : 08000007; % 9: j fim1 %
-00000005 : 214a0064; % 11: certo1: addi $t2, $t2, 100 %
-00000006 : 08000007; % 12: j fim1 %
-00000007 : 218c0064; % 14: fim1: addi $t4, $t4, 100 %
+00000000 : 20090064; % 3: addi $t1, $zero, 100 %
+00000001 : 200a0064; % 4: addi $t2, $zero, 100 %
+00000002 : 112a0001; % 5: beq $t1, $t2, errado1 %
+00000003 : 114a0001; % 6: beq $t2, $t2, certo1 %
+00000004 : 08000006; % 8: j fim1 %
+00000005 : 216b0064; % 10: addi $t3, $t3, 100 %
+00000006 : 15080001; % 12: bne $t0, $t0, errado2 %
+00000007 : 150f0001; % 13: bne $t0, $t7, certo2 %
+00000008 : 0800000a; % 15: j fim2 %
+00000009 : 218c0064; % 17: addi $t4, $t4, 100 %
+0000000a : 0800000b; % 19: j exit %
+0000000b : 21ef0064; % 22: addi $t7, $t7, 100 %
 
 END;
 ------------------------------------------------*/
@@ -24,8 +28,8 @@ END;
 module mips_uniciclo_tb3;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
-	wire[31:0] ALUresult, pc, instruction;
-	
+	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
+	wire alu_zero;
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
@@ -34,7 +38,10 @@ module mips_uniciclo_tb3;
 		.reg_clock(reg_clock),
 		.ALUresult_out(ALUresult),
 		.pc_out(pc),
-		.instruction_out(instruction)
+		.instruction_out(instruction),
+		.alu_zero_out(alu_zero),
+		.alu_operand_a(alu_operand_a),
+		.alu_operand_b(alu_operand_b)
 	);
 	
 	integer i;
@@ -117,25 +124,25 @@ module mips_uniciclo_tb3;
 				#50;
 			end
 		test_result_t(
-			32'h_0,
-			32'h_64,
-			32'h_64,
-			32'h_0,
-			32'h_0,
-			32'h_0, 
-			32'h_0,
-			32'h_0
+			32'h_0, 	// $t0
+			32'h_64,				// $t1
+			32'h_64,				// $t2
+			32'h_0,				// $t3
+			32'h_0,				// $t4
+			32'h_0, 				// $t5
+			32'h_0,				// $t6
+			32'h_64				// $t7
 			);
 		
 //		test_result_s(
-//			32'h_0,
-//			32'h_0,
-//			32'h_0,
-//			32'h_0,
-//			32'h_0,
-//			32'h_0, 
-//			32'h_0,
-//			32'h_64
+//			32'h_0,			//$s0
+//			32'h_0,			//$s1
+//			32'h_0,					//$s2
+//			32'h_0,			//$s3
+//			32'h_0,					//$s4
+//			32'h_0, 			//$s5
+//			32'h_0,					//$s6
+//			32'h_0					//$s7
 //			);	
 	end
 	
