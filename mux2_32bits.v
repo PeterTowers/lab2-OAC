@@ -2,7 +2,8 @@ module mux2_32bits
 	(
 		input [31:0] option_a,
 		input [31:0] option_b,
-		input [31:0] option_c,	// Return address (JAL/JALR/etc)
+		input [31:0] option_c,
+		input [31:0] option_d,
 		input [1:0]  selector,
 		output reg [31:0] out
 	); 
@@ -18,6 +19,9 @@ module mux2_32bits
 				
 			2'b10:
 				out <= option_c;
+				
+			2'b11:
+				out <= option_d;
 		endcase
 	end
 	 
