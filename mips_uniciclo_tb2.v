@@ -8,17 +8,17 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 210802e6; % 2: addi $t0, $t0, 742 % 
-00000001 : 31090529; % 3: andi $t1, $t0, 1321 %
-00000002 : 01285020; % 4: add $t2, $t1, $t0 %  
-00000003 : 01289023; % 5: subu $s2, $t1, $t0 % 
-00000004 : 01285826; % 6: xor $t3, $t1, $t0 %  
-00000005 : 01286022; % 7: sub $t4, $t1, $t0 %  
-00000006 : 01286824; % 8: and $t5, $t1, $t0 %  
-00000007 : 01287025; % 9: or $t6, $t1, $t0 %   
-00000008 : 01287827; % 10: nor $t7, $t1, $t0 % 
-00000009 : 01288026; % 11: xor $s0, $t1, $t0 % 
-0000000a : 01288821; % 12: addu $s1, $t1, $t0 %
+00000000 : 210802e6; % 3: addi $t0, $t0, 742 % 
+00000001 : 31090529; % 5: andi $t1, $t0, 1321 %
+00000002 : 01285020; % 7: add $t2, $t1, $t0 %  
+00000003 : 01289023; % 9: subu $s2, $t1, $t0 % 
+00000004 : 01285826; % 11: xor $t3, $t1, $t0 % 
+00000005 : 01286022; % 13: sub $t4, $t1, $t0 % 
+00000006 : 01286824; % 15: and $t5, $t1, $t0 % 
+00000007 : 01287025; % 17: or $t6, $t1, $t0 %  
+00000008 : 01287827; % 19: nor $t7, $t1, $t0 % 
+00000009 : 01288026; % 21: xor $s0, $t1, $t0 % 
+0000000a : 01288821; % 23: addu $s1, $t1, $t0 %
 
 END;
 ------------------------------------------------*/
@@ -27,14 +27,17 @@ END;
 module mips_uniciclo_tb2;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock;
-	wire[31:0] ALUresult_out;
+	wire[31:0] ALUresult, pc, instruction;
+	
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
 		.inst_clock(inst_clock),
 		.data_clock(data_clock),
 		.reg_clock(reg_clock),
-		.ALUresult_out(ALUresult_out)
+		.ALUresult_out(ALUresult),
+		.pc_out(pc),
+		.instruction_out(instruction)
 	);
 	
 	integer i;
