@@ -3,29 +3,39 @@ module alu (
 	input [3:0] operation, 		// Operacao
 	input equal,					// Seletor para condicao de branch (igual ou desigual)
 	output reg [31:0] result,	// Resultado
-	output reg alu_zero			// Sinal de controle para branch
+	output reg alu_zero,			// Sinal de controle para branch
+	output reg movn				// Sinal de controle para movn
 	);
 	
 	initial begin
-		alu_zero = 0;
+		alu_zero = 1;
+		movn = 1;
 	end
 	
 	always @(*) begin
 		alu_zero <= 0;
+		movn <= 1'b1;
 		
 		case(operation)
-			4'b0000:	// AND
+			4'b0000:			// AND
 				result <= A & B;
 			
-			4'b0001: // OR
+			4'b0001: 		// OR
 				result <= A | B;
 				
-			4'b0010: // ADD
+			4'b0010: 		// ADD
 				// TODO: Testar overflow
 				result <= $signed(A) + $signed(B);
 				
-			4'b0011: // ADDU
+			4'b0011: 		// ADDU
 				result <= A + B;
+				
+			4'b0100:	begin	// MOVN
+				if (B != 0)			// Caso rt != 0
+					result <= A;	// rd <- rs
+				else
+					movn <= 1'b0;	// Caso contrario, nao permite escrita no bco reg
+			end
 			
 			/* SUB & BEQ/BNE */
 			4'b0110: begin
@@ -76,10 +86,7 @@ module alu (
 				
 			4'b1111: // LUI: B tem que ser os 16-bits superiores.
 				result <= (B << 16);
-			/*	
-			6'b000010: // MUL	-> MUL e DIV tem hardware especifico para eles
-				result <= A * B;	// E o resultado de MUL pode ter 64 bits
-			*/
+			
 			/* DEFAULT */
 			default:	// Modifiquei para resultar em um valor "absurdo" (em decimal: 3.735.928.559; bin: 1101 1110 1010 1101 1011 1110 1110 1111)
 				result <= 32'hdeadbeef;	// Assim a gente sabe que deu ruim nesse ponto

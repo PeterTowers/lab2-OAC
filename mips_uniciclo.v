@@ -23,7 +23,8 @@ module mips_uniciclo(
 	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
 	
 	wire equal;						// Seletor do resultado de alu_zero
-	wire alu_zero;					// Entrada para tomada de decisao do branch
+	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
+	wire movn;						// Sinal de controle p/ evitar escrita em movn
 	
 	wire signed_imm_extension;
 	
@@ -71,6 +72,7 @@ module mips_uniciclo(
 		.write_reg(reg_dst_write),
 		.write_enable(write_enable_reg),
 		.muu_write_enable(muu_write_enable),
+		.movn(movn),
 		.write_data(write_on_bank),
 		.read_data1(reg_bank_data1), 
 		.read_data2(reg_bank_data2)
@@ -169,9 +171,10 @@ module mips_uniciclo(
 		.A(reg_bank_data1), 
 		.B(ALUoperand_b), 
 		.operation(ALUoperation),
+		.equal(equal),
 		.result(ALUresult),
 		.alu_zero(alu_zero),
-		.equal(equal)
+		.movn(movn)
 	);
 	
 	// Unidade Multiplicadora - MUU
