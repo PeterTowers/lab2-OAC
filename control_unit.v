@@ -6,14 +6,14 @@ module control_unit(
 	output reg [1:0] reg_dst, 			// Escolhe o reg em que sera salvo P/ instrucao
 												// com 2 eh 0, p/ 3, eh 1, PC eh 2.
 	output reg [1:0] reg_write,		// Escolhe qual dado sera salvo no bco de reg
-												// 00 é reg, 01 mem, 10 return address
-	output reg[3:0] opALU,				// Operacao a ser executada na ALU
+												// 00 Ã© reg, 01 mem, 10 return address
+	output reg [3:0] opALU,				// Operacao a ser executada na ALU
 	output reg write_enable_mem,		// Habilita escrita na memoria de dados
 	output reg origALU,					// Origem do 2o operando da ALU
-	output reg write_enable_reg,		// Habilita escrita no banco de registradores
+	output reg [1:0] write_enable_reg,	// Habilita escrita no banco de registradores
 	output reg equal,						// Condicao de escolha entre resultado BEQ/BNE
 	output reg signed_imm_extension,	// Decide se a extensao de sinal do imediato sera sinalizada ou nao
-	output reg mem_byte_mode			// Decide se a leitura e escrita na memória vão ser em Byte (1), ou Word (0)
+	output reg mem_byte_mode			// Decide se a leitura e escrita na memÃ³ria vÃ£o ser em Byte (1), ou Word (0)
 	);
 
 	// Definicao das condicoes iniciais
@@ -24,7 +24,7 @@ module control_unit(
 		opALU = 4'b0;
 		write_enable_mem = 1'b0;
 		origALU = 1'b0;
-		write_enable_reg = 1'b0;
+		write_enable_reg = 2'b00;
 		equal = 1'b1;
 		signed_imm_extension = 1'b1;
 	end	
@@ -42,9 +42,9 @@ module control_unit(
 						opALU <= 4'bx;					// Nao usa ALU, nao importa
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+						write_enable_reg <= 2'b01;	// Escreve no banco de reg
 						signed_imm_extension <= 1'bx; //Don't care imediato
-						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 					end
 					
 					6'b00_1000: begin	// JR
@@ -54,9 +54,9 @@ module control_unit(
 						opALU <= 4'bx;					// Nao usa ALU, nao importa
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-						write_enable_reg <= 1'b0;	// NAO escreve no banco de reg
+						write_enable_reg <= 2'b00;	// NAO escreve no banco de reg
 						signed_imm_extension <= 1'bx; //Don't care imediato
-						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 					end
 					
 					/* DEFAULT */
@@ -67,9 +67,9 @@ module control_unit(
 						opALU <= 4'b110;				// Avaliar campo funct na alu_control
 						write_enable_mem <= 1'b0;	// NAO escreve na memoria
 						origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
+						write_enable_reg <= 2'b01;	// Escreve no banco de reg
 						signed_imm_extension <= 1'bx; //Don't care imediato
-						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 						
 						if (funct < 6'b100000) 		// Operacoes na MUU
 							reg_write <= 2'b11;		// Escreve resultado da MUU no banco
@@ -123,9 +123,9 @@ module control_unit(
 					opALU <= 4'dx;					// NAO opera na ALU, nao importa
 					write_enable_mem <= 1'b1;	// NAO escreve na memoria
 					origALU <= 1'd0;				// 2o operando da ALU eh o 2o reg
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'bx; //Don't care imediato
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 
 /*----------------------------------------------------------------------------*/
@@ -138,9 +138,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de soma na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1; 				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 			6'b001001:  //ADDIU
 				begin
@@ -150,9 +150,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de ADDU na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1; 				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 			6'b001100:  //ANDI 
@@ -163,9 +163,9 @@ module control_unit(
 					opALU <= 4'b010;				// Operacao AND na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO-inalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 			6'b000100:	// BEQ
@@ -176,10 +176,10 @@ module control_unit(
 					opALU <= 4'b001;				// Operacao de subtracao na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd0;				// 2o operando da ALU eh o registrador 2
-					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
+					write_enable_reg <= 2'b00;	// NAO escreve no bco de registradores
 					equal <= 1'b1;					// Testa igualdade na ALU
 					signed_imm_extension <= 1'b1; //imediato sinalizado
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 			
 			6'b000001:	// "REGIMM" - BGEZ/BGEZAL
@@ -191,17 +191,17 @@ module control_unit(
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					equal <= 1'b1;					// Testa igualdade na ALU
 					signed_imm_extension <= 1'b1; //imediato sinalizado
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 					
 					
 					if (rt == 5'b00001) begin	// BEGEZ
 						reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
-						write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
+						write_enable_reg <= 2'b00;	// NAO escreve no bco de registradores
 					end
 					
 					else begin						// BGEZAL
 						reg_dst <= 2'd2;				// Instrucao salva pc+1 em $ra
-						write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+						write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					end
 				end
 			
@@ -213,10 +213,10 @@ module control_unit(
 					opALU <= 4'b0001;				// Operacao de subtracao na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd0;				// 2o operando da ALU eh o 2o registrador
-					write_enable_reg <= 1'd0;	// NAO escreve no bco de registradores
+					write_enable_reg <= 2'b00;	// NAO escreve no bco de registradores
 					equal <= 1'b0;					// Testa desigualdade na ALU
 					signed_imm_extension <= 1'b1; //imediato sinalizado
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 			6'b100011:  //LW
@@ -227,9 +227,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de soma na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'b0;		// Memória em Word mode.
+					mem_byte_mode <= 1'b0;		// MemÃ³ria em Word mode.
 				end
 			
 			6'b100000:  //LB
@@ -240,9 +240,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de soma na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'b1;		// Memória em Byte mode.
+					mem_byte_mode <= 1'b1;		// MemÃ³ria em Byte mode.
 				end
 				
 			6'b001101:  //ORI 
@@ -253,9 +253,9 @@ module control_unit(
 					opALU <= 4'b100;				// Operacao OR na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b1; //Imediato com extensao NAO sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 			
 			6'b001111:  //LUI
@@ -266,9 +266,9 @@ module control_unit(
 					opALU <= 4'b1001;				// Operacao LUI na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 			
 			6'b101011:  //SW
@@ -279,9 +279,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de soma na ALU
 					write_enable_mem <= 1'b1;	// Escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
-					write_enable_reg <= 1'd0;	// NAO escreve registrador
+					write_enable_reg <= 2'b00;	// NAO escreve registrador
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'b0;		// Memória em word mode.
+					mem_byte_mode <= 1'b0;		// MemÃ³ria em word mode.
 				end
 			6'b101000:  //SB
 				begin
@@ -291,9 +291,9 @@ module control_unit(
 					opALU <= 4'b000;				// Operacao de soma na ALU
 					write_enable_mem <= 1'b1;	// Escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh imediato/offset
-					write_enable_reg <= 1'd0;	// NAO escreve registrador
+					write_enable_reg <= 2'b00;	// NAO escreve registrador
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
-					mem_byte_mode <= 1'b1;		// Memória em byte mode.
+					mem_byte_mode <= 1'b1;		// MemÃ³ria em byte mode.
 				end
 				
 			
@@ -306,9 +306,9 @@ module control_unit(
 					opALU <= 4'b101;				// Operacao XOR na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
-					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 /*----------------------------------------------------------------------------*/
@@ -321,9 +321,9 @@ module control_unit(
 					opALU <= 4'bx;					// Nao usa ALU, nao importa
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx; 				// Nao usa ALU, nao importa
-					write_enable_reg <= 1'b0;	// NAO escreve registrador
+					write_enable_reg <= 2'b00;	// NAO escreve registrador
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 			6'b000011:	// JAL (jump and link)	TODO
@@ -334,9 +334,9 @@ module control_unit(
 					opALU <= 4'bx; 				// Nao usa ALU, nao importa
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'bx;				// Nao usa ALU, nao importa
-					write_enable_reg <= 1'b1;	// Escreve no banco de registradores
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 				
 /*----------------------------------------------------------------------------*/
@@ -349,9 +349,9 @@ module control_unit(
 					opALU <= 4'b0;					// Nao usa ALU, nao importa
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'b0;				// Nao usa ALU, nao importa
-					write_enable_reg <= 1'b0;	// NAO escreve registrador
+					write_enable_reg <= 2'b00;	// NAO escreve registrador
 					signed_imm_extension <= 1'bx; //Don't care imediato
-					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memÃ³ria
 				end
 		endcase
 	end

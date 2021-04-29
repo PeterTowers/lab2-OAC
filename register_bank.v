@@ -1,7 +1,8 @@
 module register_bank(
 	input clock,
 	input[4:0] read_reg1, read_reg2, write_reg,	
-	input write_enable, muu_write_enable, movn,
+	input [1:0] write_enable,
+	input muu_write_enable, movn,
 	input [31:0] write_data,
 	output reg[31:0] read_data1, read_data2
 	);
@@ -18,9 +19,21 @@ module register_bank(
 	
 	//Sempre que entrar a borda de subida do clock
 	always @(posedge clock) begin
-		// Para realizar escrita, write_enable = 1, muu_write_enable = 1 e reg != $zero
-		if(write_enable && muu_write_enable && movn && (write_reg != 0) )
-			registers[write_reg] <= write_data; //Escreve no registrador indifcado por write_reg
+		// write_enable = 00, escrita OFF. reg == $zero, proibido
+		if( (write_enable != 2'b00) && (write_reg != 0) ) begin
+			case (write_enable)
+				2'b01:			// Escrita ON
+					registers[write_reg] <= write_data;
+				
+				2'b10: begin	// Escrita condicional
+					if (muu_write_enable || movn )	// Caso um dos sinais ativo, escreve
+					registers[write_reg] <= write_data;
+					
+				default:
+					;		// NO OP
+			
+			endcase
+		end
 	end		
 	always @*
 	begin

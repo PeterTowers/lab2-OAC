@@ -16,7 +16,7 @@ module mips_uniciclo(
 	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
 	wire [31:0] ALUresult; 		//Resultado da ULA
 	wire [31:0] extended_imm; // Imediato com sinal extendido.
-	wire write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
+	wire [1:0]  write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
 	wire write_enable_mem; 		// Se 1, ocorrera uma escrita na memoria de dados na subida do clock.
 	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
 	wire [1:0] reg_write; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
