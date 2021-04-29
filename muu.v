@@ -16,6 +16,14 @@ module muu (
 	reg [63:0] result;
 	reg [31:0] hi, lo;
 	
+	initial begin
+		hi <= 0;
+		lo <= 0;
+		out <= 0;
+		div_zero <= 0;
+	
+	end
+	
 	always @(posedge clk) begin
 		div_zero <= 0;
 		
