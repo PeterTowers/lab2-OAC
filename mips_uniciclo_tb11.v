@@ -138,30 +138,33 @@ module mips_uniciclo_tb11;
 				#50;
 			end
 			
+		for(i = 0; i <=31; i = i + 1) begin
+			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb11.test_unit.reg_bank.registers[i]);
+		end
 			
 		
-		test_result_t(
-			32'h_7fff_fff8,	//$t0
-			32'h_8000_0008,		//$t1
-			32'h_ffff_ffc0,		//$t2
-			32'h_c000_0007,		//$t3
-			32'h_200,				//$t4
-			32'h_ffff_ffe0,			//$t5
-			32'h_ffff_c200,				//$t6
-			32'h_ffff_ffdf			//$t7
-			);
-		
-		
-		test_result_s(
-			32'h_fffdd200,			//$s0
-			32'h_8000_1ee7,			//$s1
-			32'h_0,			//$s2
-			32'h_0,			//$s3
-			32'h_0,			//$s4
-			32'h_0, 			//$s5
-			32'h_0,			//$s6
-			32'h_0			//$s7
-			);	
+//		test_result_t(
+//			32'h_7fff_fff8,	//$t0
+//			32'h_8000_0008,		//$t1
+//			32'h_ffff_ffc0,		//$t2
+//			32'h_c000_0007,		//$t3
+//			32'h_200,				//$t4
+//			32'h_ffff_ffe0,			//$t5
+//			32'h_ffff_c200,				//$t6
+//			32'h_ffff_ffdf			//$t7
+//			);
+//		
+//		
+//		test_result_s(
+//			32'h_fffdd200,			//$s0
+//			32'h_8000_1ee7,			//$s1
+//			32'h_0,			//$s2
+//			32'h_0,			//$s3
+//			32'h_0,			//$s4
+//			32'h_0, 			//$s5
+//			32'h_0,			//$s6
+//			32'h_0			//$s7
+//			);	
 	end
 	
 endmodule
