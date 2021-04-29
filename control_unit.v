@@ -250,11 +250,11 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					reg_write <= 2'b00;			// Escreve resultado da ALU no banco
-					opALU <= 4'b100;				// Operacao OR na ALU
+					opALU <= 4'b0100;				// Operacao OR na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 1'd1;	// Escreve no banco de registradores
-					signed_imm_extension <= 1'b1; //Imediato com extensao NAO sinalizada
+					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
 					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memória
 				end
 			
