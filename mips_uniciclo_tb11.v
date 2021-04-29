@@ -38,7 +38,7 @@ END;
 module mips_uniciclo_tb11;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
-	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
+	wire[31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
 	wire alu_zero;
 	
 	mips_uniciclo test_unit(
@@ -52,11 +52,22 @@ module mips_uniciclo_tb11;
 		.instruction_out(instruction),
 		.alu_zero_out(alu_zero),
 		.alu_operand_a(alu_operand_a),
-		.alu_operand_b(alu_operand_b)
+		.alu_operand_b(alu_operand_b),
+		.t0(t0),
+		.t1(t1),
+		.t2(t2),
+		.t3(t3),
+		.t4(t4),
+		.t5(t5),
+		.t6(t6),
+		.t7(t7),
+		.hi(hi),
+		.lo(lo),
+		.memory_write(memory_write)
 	);
 	
-	integer i;
-	integer count_empty_instructions;
+	
+	
 	parameter num_cycles = 100;
 		
 	task test_result_t;
@@ -120,7 +131,8 @@ module mips_uniciclo_tb11;
 		muu_clock = 1'b0;
 	end
 	
-	initial begin	// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
+	initial begin	: do_test// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
+		integer i, count_empty_instructions;
 		count_empty_instructions = 0;
 		repeat(num_cycles)
 			begin 
