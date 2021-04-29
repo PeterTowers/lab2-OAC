@@ -10,11 +10,12 @@ module muu (
 	input [3:0] operation,	// Operacao - pode ser reduzido p/ 3 bits,
 									// deixando 4 para eventual expansao
 	output reg div_zero,		// Indica divisao por zero
-	output reg [31:0] out	// Saida dos dados
+	output reg [31:0] out,	// Saida dos dados
+	output reg [31:0] hi, lo //Expoe os valores de hi e lo para apresentar debugar o código mais facilmente.
 	);
 	
 	reg [63:0] result;
-	reg [31:0] hi, lo;
+	
 	
 	initial begin
 		hi <= 0;
