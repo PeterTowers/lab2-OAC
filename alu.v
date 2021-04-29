@@ -18,7 +18,7 @@ module alu (
 				result <= A & B;
 			
 			4'b0001: // OR
-				result <= A | B;
+				result <= $signed(A) | $signed(B);
 				
 			4'b0010: // ADD
 				// TODO: Testar overflow
