@@ -56,6 +56,7 @@ module mips_uniciclo_tb11;
 	);
 	
 	integer i;
+	integer count_empty_instructions;
 	parameter num_cycles = 100;
 		
 	task test_result_t;
@@ -120,22 +121,29 @@ module mips_uniciclo_tb11;
 	end
 	
 	initial begin	// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
+		count_empty_instructions = 0;
 		repeat(num_cycles)
 			begin 
-				reg_clock = 1'b0;
-				pc_clock = 1'b1;
-				#50;
-				pc_clock = 1'b0;
-				inst_clock = 1'b1;
-				#250;
-				inst_clock = 1'b0;
-				data_clock = 1'b1;
-				muu_clock = 1'b1;
-				#250;
-				data_clock = 1'b0;
-				muu_clock = 1'b0;
-				reg_clock = 1'b1;
-				#50;
+				if (count_empty_instructions < 3) begin				
+					reg_clock = 1'b0;
+					pc_clock = 1'b1;
+					#50;
+					pc_clock = 1'b0;
+					inst_clock = 1'b1;
+					#250;
+					inst_clock = 1'b0;
+					data_clock = 1'b1;
+					muu_clock = 1'b1;
+					#250;
+					data_clock = 1'b0;
+					muu_clock = 1'b0;
+					reg_clock = 1'b1;
+					#50;
+					if (instruction == 0)
+						count_empty_instructions = count_empty_instructions + 1;
+					else
+						count_empty_instructions = 0;
+				end
 			end
 			
 		for(i = 0; i <=31; i = i + 1) begin
