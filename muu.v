@@ -23,6 +23,8 @@ module muu (
 			4'b0000: begin	// MUL
 				result = $signed(rs) * $signed(rt);
 				out <= result[31:0];
+				hi <= result[63:32];
+				lo <= result[31:0];
 			end
 			
 			4'b0001: begin	// MULT

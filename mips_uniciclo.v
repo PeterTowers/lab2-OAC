@@ -105,6 +105,7 @@ module mips_uniciclo(
 		.q(instruction)
 	);
 	
+	// Esse módulo serve para ativar o modo Byte do SB e LB, na hora de ESCREVER na memória de dados.
 	byte_filter mem_byte_filter_in(
 		.in (reg_bank_data2),
 		.filter_enable(memory_byte_filter),
@@ -120,6 +121,7 @@ module mips_uniciclo(
 		.q(mem_data)
 	);
 	
+	// Esse módulo serve para ativar o modo Byte do SB e LB, na hora de LER da memória de dados.
 	byte_filter mem_byte_filter_out(
 		.in (mem_data),
 		.filter_enable(memory_byte_filter),
@@ -144,12 +146,12 @@ module mips_uniciclo(
 
 	// Mux para escolher se o que vai para a escrita do banco de registradores eh
 	mux2_32bits write_reg_bank_mux(	// o ALU, memoria, return address ou MUU
-		.option_a(ALUresult),		// Resultado da ALU
-		.option_b(mem_data),			// Dado da memoria
-		.option_c(return_address),	// Return address (JAL/JALR)
-		.option_d(muu_out),			// Resutado da Unidade Multiplicadora
-		.selector(reg_write),		// Seletor
-		.out(write_on_bank)			// Saida
+		.option_a(ALUresult),			// Resultado da ALU
+		.option_b(mem_data),				// Dado da memoria
+		.option_c(return_address),		// Return address (JAL/JALR)
+		.option_d(muu_out),				// Resutado da Unidade Multiplicadora
+		.selector(reg_write),			// Seletor
+		.out(write_on_bank)				// Saida
 	);
 	
 	//Extensor de Sinal
@@ -179,7 +181,7 @@ module mips_uniciclo(
 	
 	// Unidade Multiplicadora - MUU
 	muu multp_unit(
-		.clk(muu_clock),
+		.clk(muu_clock), 
 		.rs(reg_bank_data1),
 		.rt(ALUoperand_b),
 		.operation(muu_op),
