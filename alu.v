@@ -13,8 +13,9 @@ module alu (
 	end
 	
 	always @(*) begin
-		alu_zero <= 0;
+		alu_zero <= 0; 
 		movn <= 1'b1;
+		result <= 32'hxxxxxxxx;
 		
 		case(operation)
 			4'b0000:			// AND
@@ -73,9 +74,9 @@ module alu (
 			/* SLT */
 			4'b1001: begin
 				if ($signed(A) < $signed(B))
-					result = 1;
+					result <= 1;
 				else
-					result = 0;
+					result <= 0;
 			end
 				
 			4'b1100: // NOR

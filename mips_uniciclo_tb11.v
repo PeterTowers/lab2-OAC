@@ -36,7 +36,7 @@ END;
 module mips_uniciclo_tb11;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
-	wire[31:0] ALUresult, pc, instruction, alu_operand_a, alu_operand_b;
+	wire[31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
 	wire alu_zero;
 	
 	mips_uniciclo test_unit(
@@ -50,10 +50,22 @@ module mips_uniciclo_tb11;
 		.instruction_out(instruction),
 		.alu_zero_out(alu_zero),
 		.alu_operand_a(alu_operand_a),
-		.alu_operand_b(alu_operand_b)
+		.alu_operand_b(alu_operand_b),
+		.t0(t0),
+		.t1(t1),
+		.t2(t2),
+		.t3(t3),
+		.t4(t4),
+		.t5(t5),
+		.t6(t6),
+		.t7(t7),
+		.hi(hi),
+		.lo(lo),
+		.memory_write(memory_write)
 	);
 	
-	integer i;
+	
+	
 	parameter num_cycles = 100;
 		
 	task test_result_t;
@@ -117,49 +129,60 @@ module mips_uniciclo_tb11;
 		muu_clock = 1'b0;
 	end
 	
-	initial begin	// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
+	initial begin	: do_test// Temos varios sinais de clock, pois cada componente precisa ser ativado em um momento diferente.
+		integer i, count_empty_instructions;
+		count_empty_instructions = 0;
 		repeat(num_cycles)
 			begin 
-				reg_clock = 1'b0;
-				pc_clock = 1'b1;
-				#50;
-				pc_clock = 1'b0;
-				inst_clock = 1'b1;
-				#250;
-				inst_clock = 1'b0;
-				data_clock = 1'b1;
-				muu_clock = 1'b1;
-				#250;
-				data_clock = 1'b0;
-				muu_clock = 1'b0;
-				reg_clock = 1'b1;
-				#50;
+				if (count_empty_instructions < 3) begin				
+					reg_clock = 1'b0;
+					pc_clock = 1'b1;
+					#50;
+					pc_clock = 1'b0;
+					inst_clock = 1'b1;
+					#250;
+					inst_clock = 1'b0;
+					data_clock = 1'b1;
+					muu_clock = 1'b1;
+					#250;
+					data_clock = 1'b0;
+					muu_clock = 1'b0;
+					reg_clock = 1'b1;
+					#50;
+					if (instruction == 0)
+						count_empty_instructions = count_empty_instructions + 1;
+					else
+						count_empty_instructions = 0;
+				end
 			end
 			
+		for(i = 0; i <=31; i = i + 1) begin
+			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb11.test_unit.reg_bank.registers[i]);
+		end
 			
 		
-		test_result_t(
-			32'h_7fff_fff8,	//$t0
-			32'h_8000_0008,		//$t1
-			32'h_ffff_ffc0,		//$t2
-			32'h_c000_0007,		//$t3
-			32'h_200,				//$t4
-			32'h_ffff_ffe0,			//$t5
-			32'h_ffff_c200,				//$t6
-			32'h_ffff_ffdf			//$t7
-			);
-		
-		
-		test_result_s(
-			32'h_fffdd200,			//$s0
-			32'h_8000_1ee7,			//$s1
-			32'h_0,			//$s2
-			32'h_0,			//$s3
-			32'h_0,			//$s4
-			32'h_0, 			//$s5
-			32'h_0,			//$s6
-			32'h_0			//$s7
-			);	
+//		test_result_t(
+//			32'h_7fff_fff8,	//$t0
+//			32'h_8000_0008,		//$t1
+//			32'h_ffff_ffc0,		//$t2
+//			32'h_c000_0007,		//$t3
+//			32'h_200,				//$t4
+//			32'h_ffff_ffe0,			//$t5
+//			32'h_ffff_c200,				//$t6
+//			32'h_ffff_ffdf			//$t7
+//			);
+//		
+//		
+//		test_result_s(
+//			32'h_fffdd200,			//$s0
+//			32'h_8000_1ee7,			//$s1
+//			32'h_0,			//$s2
+//			32'h_0,			//$s3
+//			32'h_0,			//$s4
+//			32'h_0, 			//$s5
+//			32'h_0,			//$s6
+//			32'h_0			//$s7
+//			);	
 	end
 	
 endmodule

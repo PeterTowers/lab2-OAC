@@ -30,6 +30,8 @@ module control_unit(
 	end	
 	
 	always @(*) begin
+		equal <= 1'bx;
+		reg_write <= 2'bxx;
 		case(opcode)
 /*----------------------------------------------------------------------------*/
 			/* Instrucoes tipo R */

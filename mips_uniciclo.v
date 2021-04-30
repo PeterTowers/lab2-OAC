@@ -1,7 +1,7 @@
 `timescale 1ps / 1ps  
 module mips_uniciclo(
 		input pc_clock, inst_clock, data_clock, reg_clock, muu_clock,
-		output[31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a, alu_operand_b,
+		output[31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a, alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write,
 		output alu_zero_out
 	);
 	
@@ -44,6 +44,9 @@ module mips_uniciclo(
 	wire [31:0] memory_out;		// Fio que do que foi lido da memoria. Filtrado para ser Word ou Byte.
 	wire memory_byte_filter;
 	
+	//Expondo os registradores para facilitar na apresentação e no Debug.
+	wire [31:0] t0_wire, t1_wire, t2_wire, t3_wire, t4_wire, t5_wire, t6_wire, t7_wire, hi_wire, lo_wire;
+	
 	
 	assign ALUresult_out = ALUresult;
 	assign pc_out = pc;
@@ -51,6 +54,19 @@ module mips_uniciclo(
 	assign alu_zero_out = alu_zero;
 	assign alu_operand_a = reg_bank_data1;
 	assign alu_operand_b = ALUoperand_b;
+	
+	assign t0 = t0_wire;
+	assign t1 = t1_wire;
+	assign t2 = t2_wire;
+	assign t3 = t3_wire;
+	assign t4 = t4_wire;
+	assign t5 = t5_wire;
+	assign t6 = t6_wire;
+	assign t7 = t7_wire;
+	
+	assign hi = hi_wire;
+	assign lo = lo_wire;
+	assign memory_write = memory_in;
 
 	// Modulo do PC
 	program_counter p_counter(
@@ -75,7 +91,15 @@ module mips_uniciclo(
 		.movn(movn),
 		.write_data(write_on_bank),
 		.read_data1(reg_bank_data1), 
-		.read_data2(reg_bank_data2)
+		.read_data2(reg_bank_data2),
+		.t0(t0_wire),
+		.t1(t1_wire),
+		.t2(t2_wire),
+		.t3(t3_wire),
+		.t4(t4_wire),
+		.t5(t5_wire),
+		.t6(t6_wire),
+		.t7(t7_wire)
 	);
 	
 	//Unidade de Controle
@@ -186,7 +210,9 @@ module mips_uniciclo(
 		.rt(ALUoperand_b),
 		.operation(muu_op),
 		.out(muu_out),
-		.div_zero(muu_div_zero)
+		.div_zero(muu_div_zero),
+		.hi(hi_wire),
+		.lo(lo_wire)
 	);
 	
 	// Controle da Unidade Multiplicadora
