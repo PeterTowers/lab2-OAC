@@ -76,8 +76,10 @@ module control_unit(
 						if (funct < 6'b100000) 		// Operacoes na MUU
 							reg_write <= 2'b11;		// Escreve resultado da MUU no banco
 							
-						else if (funct == 6'b001011)	//MOVN
+						else if (funct == 6'b001011) begin	//MOVN
 							write_enable_reg <= 2'b10;	// Escrita no bco reg condicional
+							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
+						end
 							
 						else								// Operacoes na ALU
 							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
