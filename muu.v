@@ -11,7 +11,7 @@ module muu (
 									// deixando 4 para eventual expansao
 	output reg div_zero,		// Indica divisao por zero
 	output reg [31:0] out,	// Saida dos dados
-	output reg [31:0] hi, lo //Expoe os valores de hi e lo para apresentar debugar o código mais facilmente.
+	output reg [31:0] hi, lo // Expoe os valores de hi e lo p/ apresentar&debugar
 	);
 	
 	reg [63:0] result;
