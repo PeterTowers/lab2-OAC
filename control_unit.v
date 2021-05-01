@@ -77,7 +77,7 @@ module control_unit(
 							reg_write <= 2'b11;		// Escreve resultado da MUU no banco
 							
 						else if (funct == 6'b001011)	//MOVN
-							write_enable_reg <= 2'b10;	// Talvez escreva no bco reg
+							write_enable_reg <= 2'b10;	// Escrita no bco reg condicional
 							
 						else								// Operacoes na ALU
 							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
@@ -86,12 +86,6 @@ module control_unit(
 					/* TODO:
 					
 					6'b00_0000: begin	// SLL
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b10_1010: begin	// SLT
 						pc_src = 2'b11;				// PC = PC+1
 						opALU <= 4'b0;					// Operacao ??? na ALU
 						write_enable_reg <= 1'b1;	// Escreve no banco de reg
