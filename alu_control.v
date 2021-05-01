@@ -40,7 +40,7 @@ module alu_control(
 						operation <= 4'b0000;
 						
 					6'b00_1011:	// MOVN
-						operation <= 4'b1000;
+						operation <= 4'b0100;
 					
 					6'b10_0111:	// NOR
 						operation <= 4'b1100;
