@@ -1,3 +1,5 @@
+/* 
+ */
 module muu_control(
 		input[5:0] funct,
 		output reg [3:0] operation,
@@ -5,12 +7,12 @@ module muu_control(
 	);
 	
 	initial begin
-		muu_write_enable = 1;	// Permite outras instrucoes escrever no bco
+		muu_write_enable = 1'b0;	// Permite outras instrucoes escrever no bco
 		operation = 4'b1111;
 	end
 	
 	always @(*) begin
-		muu_write_enable = 1;	// Permite outras instrucoes escrever no bco
+		muu_write_enable = 1'b0;	// Permite outras instrucoes escrever no bco
 		
 		case (funct)
 			6'b000010: begin	// MUL - SPECIAL OP 011100; FUNCT 000010
