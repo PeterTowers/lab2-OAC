@@ -21,7 +21,7 @@ module mips_uniciclo_tb13;
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire[31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
 	wire[31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
-	wire alu_zero;
+	wire alu_zero, movn;
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
@@ -33,6 +33,7 @@ module mips_uniciclo_tb13;
 		.pc_out(pc),
 		.instruction_out(instruction),
 		.alu_zero_out(alu_zero),
+		.movn_out(movn),
 		.alu_operand_a(alu_operand_a),
 		.alu_operand_b(alu_operand_b),
 		.t0(t0),
