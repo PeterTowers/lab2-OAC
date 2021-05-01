@@ -1,26 +1,29 @@
 `timescale 1ps / 1ps  
 module mips_uniciclo(
-		input pc_clock, inst_clock, data_clock, reg_clock, muu_clock,
-		output[31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a, alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write,
-		output alu_zero_out
+	input pc_clock, inst_clock, data_clock, reg_clock, muu_clock,
+	
+	output [31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a,
+	output [31:0] alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo,
+	output [31:0] memory_write,
+	output alu_zero_out, movn_out
 	);
 	
-	wire[31:0] instruction; 	// Sai da memoria de instrucoes e alimenta o controle, o banco de registradores e TODO: Extensao de sinal
+	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle, bco reg e TODO: Extensao de sinal DONE? -P
 	
-	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide qual o registrador para escrita.
+	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide o registrador p/ escrita.
 	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
-	wire origALU; 					// Fio para decidir se a ALU operador B usa Imediato ou registrador
-	wire [3:0] opALU;				// Gerado pela unidade de controle, ajuda a decidir a operacao da ULA.
+	wire origALU; 					// Fio para decidir se 2o op da ALU eh imm ou reg
+	wire [3:0] opALU;				// Gerado pela unidade de controle, auxilia escolha de op na ALU
 	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
-	wire [31:0] reg_bank_data1, reg_bank_data2; // Sao os valores lidos do banco de registradores
-	wire [31:0] ALUoperand_b; 	//O segundo operando da ULA.
-	wire [31:0] ALUresult; 		//Resultado da ULA
-	wire [31:0] extended_imm; // Imediato com sinal extendido.
-	wire [1:0]  write_enable_reg; 		// Se 1, ocorrera uma escrita no banco de registradores na subida do clock.
-	wire write_enable_mem; 		// Se 1, ocorrera uma escrita na memoria de dados na subida do clock.
-	wire [31:0] mem_data; 		// O dado que foi lido na memoria.
-	wire [1:0] reg_write; 				//Se 1, o dado da memoria eh enviado para a escrita do banco de registradores.
-	wire [31:0] write_on_bank; // Aquilo que sera escrito no banco
+	wire [31:0] reg_bank_data1, reg_bank_data2; // Valores lidos do banco de reg
+	wire [31:0] ALUoperand_b; 	// Segundo operando da ALU
+	wire [31:0] ALUresult; 		// Resultado da ALU
+	wire [31:0] extended_imm;	// Imediato com sinal extendido.
+	wire [1:0]  write_enable_reg;	// Determina escrita no bco reg na subida do clk
+	wire write_enable_mem; 		// Determina escrita na mem de dados na subida clk
+	wire [31:0] mem_data; 		// O dado lido da memoria
+	wire [1:0] reg_write; 		// Escolhe o que sera escrito no banco de reg
+	wire [31:0] write_on_bank; // Dado a ser escrito no banco
 	
 	wire equal;						// Seletor do resultado de alu_zero
 	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
@@ -40,21 +43,26 @@ module mips_uniciclo(
 	wire [1:0]  pc_src;			// Seletor p/ proximo valor de PC
 
 	/* Conexoes do filtro Word-Byte */
-	wire [31:0] memory_in;		// Fio que do que sera escrito na memoria. Filtrado para ser Word ou Byte.
-	wire [31:0] memory_out;		// Fio que do que foi lido da memoria. Filtrado para ser Word ou Byte.
+	wire [31:0] memory_in;		// Fio do que sera escrito na memoria. Filtrado como Word ou Byte.
+	wire [31:0] memory_out;		// Fio do que foi lido da memoria. Filtrado como Word ou Byte.
 	wire memory_byte_filter;
 	
-	//Expondo os registradores para facilitar na apresentação e no Debug.
-	wire [31:0] t0_wire, t1_wire, t2_wire, t3_wire, t4_wire, t5_wire, t6_wire, t7_wire, hi_wire, lo_wire;
+	/* Expondo os registradores para facilitar na apresentacao e no Debug. */
+	wire [31:0] t0_wire, t1_wire, t2_wire, t3_wire, t4_wire, t5_wire, t6_wire;
+	wire [31:0] t7_wire, hi_wire, lo_wire;
 	
+	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
 	
-	assign ALUresult_out = ALUresult;
-	assign pc_out = pc;
-	assign instruction_out = instruction;
-	assign alu_zero_out = alu_zero;
-	assign alu_operand_a = reg_bank_data1;
-	assign alu_operand_b = ALUoperand_b;
+/*----------------------------------------------------------------------------*/
+	// Saidas p/ apresentacao e debugging
+	assign ALUresult_out = ALUresult;		// Resultado da ALU
+	assign pc_out = pc;							// Program counter
+	assign instruction_out = instruction;	// Instrucao pega da memoria
+	assign alu_zero_out = alu_zero;			// Saida alu_zero da ALU
+	assign alu_operand_a = reg_bank_data1;	// Operador rs da ALU
+	assign alu_operand_b = ALUoperand_b;	// Operador rt da ALU
 	
+	// Saida dos registradores T
 	assign t0 = t0_wire;
 	assign t1 = t1_wire;
 	assign t2 = t2_wire;
@@ -64,9 +72,15 @@ module mips_uniciclo(
 	assign t6 = t6_wire;
 	assign t7 = t7_wire;
 	
+	// Registradores internos da MUU
 	assign hi = hi_wire;
 	assign lo = lo_wire;
+	
+	// Dados p/ escrita na memoria
 	assign memory_write = memory_in;
+	
+	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
+	assign movn_out = movn;
 
 	// Modulo do PC
 	program_counter p_counter(
