@@ -8,13 +8,13 @@ module alu (
 	);
 	
 	initial begin
-		alu_zero = 1;
-		movn = 1;
+		alu_zero = 1'b0;
+		movn = 1'b0;
 	end
 	
 	always @(*) begin
-		alu_zero <= 0; 
-		movn <= 1'b1;
+		alu_zero <= 1'b0;
+		movn <= 1'b0;
 		result <= 32'hxxxxxxxx;
 		
 		case(operation)
@@ -32,8 +32,11 @@ module alu (
 				result <= A + B;
 				
 			4'b0100:	begin	// MOVN
-				if (B != 0)			// Caso rt != 0
-					result <= A;	// rd <- rs
+				if (B != 32'b0) begin	// Caso rt != 0
+					result <= A;		// rd <- rs
+					movn <= 1'b1;		// Habilita escrita no banco de registradores
+				end
+
 				else
 					movn <= 1'b0;	// Caso contrario, nao permite escrita no bco reg
 			end
