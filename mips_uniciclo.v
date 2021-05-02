@@ -5,7 +5,13 @@ module mips_uniciclo(
 	output [31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a,
 	output [31:0] alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo,
 	output [31:0] memory_write,
-	output alu_zero_out, movn_out
+	output alu_zero_out,
+	
+	// Saidas p/ debugging; podem ser apagadas de forma segura junto com os
+	// respectivos assigns e wires.
+	output [31:0] write_on_bank_out,
+	output [1:0] write_enable_out, reg_write_out,
+	output movn_out, muu_write_enable_out
 	);
 	
 	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle, bco reg e TODO: Extensao de sinal DONE? -P
@@ -52,6 +58,7 @@ module mips_uniciclo(
 	wire [31:0] t7_wire, hi_wire, lo_wire;
 	
 	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
+	// A ideia é colocar wires aqui p/ fazer debug, caso necessario
 	
 /*----------------------------------------------------------------------------*/
 	// Saidas p/ apresentacao e debugging
@@ -80,7 +87,12 @@ module mips_uniciclo(
 	assign memory_write = memory_in;
 	
 	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
+	assign write_enable_out = write_enable_reg;
 	assign movn_out = movn;
+	assign reg_write_out = reg_write;
+	assign muu_write_enable_out = muu_write_enable;
+	assign write_on_bank_out = write_on_bank;
+/*----------------------------------------------------------------------------*/
 
 	// Modulo do PC
 	program_counter p_counter(
