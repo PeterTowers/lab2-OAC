@@ -57,16 +57,14 @@ module alu_control(
 					6'b10_1011: // SLTU
 						operation <= 5'b01010;
 					
-					
 					6'b00_0011: // SRA
 						operation <= 5'b01110;
-					/* TODO:
+					
 					6'b00_0111: // SRAV
-						operation <= 5'b00000;
-					*/
+						operation <= 5'b10000;
+					
 					6'b00_0010: // SRL
 						operation <= 5'b01011;
-					
 
 					6'b10_0010: // SUB
 						operation <= 5'b00110;
