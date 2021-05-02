@@ -37,9 +37,11 @@ module register_bank(
 					registers[write_reg] <= write_data;
 				
 				2'b10: begin	// Escrita condicional
-					if (muu_write_enable || movn )	// Caso um dos sinais ativo, escreve
-					registers[write_reg] <= write_data;
-					end
+					if (muu_write_enable || movn)	// Caso um dos sinais ativo, escreve
+						registers[write_reg] <= write_data;
+				end
+				
+				/* DEFAULT */
 				default:
 					;		// NO OP
 			
