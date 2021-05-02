@@ -34,7 +34,7 @@ module mips_uniciclo(
 	
 	/* Conexoes da ALU */
 	// Entrada
-	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
+	wire [4:0] ALUoperation; 	// Determina operacao executada na ALU
 	wire [31:0] ALUoperand_b; 	// Segundo operando da ALU
 	wire equal;						// Seletor p/ condicao de branch (igual ou desigual)
 	
