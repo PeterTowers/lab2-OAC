@@ -282,7 +282,7 @@ module control_unit(
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
 					pc_src = 2'b11;				// PC = PC+1
 					reg_write <= 2'b00;			// Escreve resultado da ALU no banco
-					opALU <= 4'b1001;				// Operacao LUI na ALU
+					opALU <= 4'b1010;				// Operacao SLTI na ALU
 					write_enable_mem <= 1'b0;	// NAO escreve na memoria
 					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
 					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
