@@ -20,10 +20,9 @@ module mips_uniciclo(
 	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
 	wire origALU; 					// Fio para decidir se 2o op da ALU eh imm ou reg
 	wire [3:0] opALU;				// Gerado pela unidade de controle, auxilia escolha de op na ALU
-	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
+	
 	wire [31:0] reg_bank_data1, reg_bank_data2; // Valores lidos do banco de reg
-	wire [31:0] ALUoperand_b; 	// Segundo operando da ALU
-	wire [31:0] ALUresult; 		// Resultado da ALU
+	
 	wire [31:0] extended_imm;	// Imediato com sinal extendido.
 	wire [1:0]  write_enable_reg;	// Determina escrita no bco reg na subida do clk
 	wire write_enable_mem; 		// Determina escrita na mem de dados na subida clk
@@ -31,11 +30,18 @@ module mips_uniciclo(
 	wire [1:0] reg_write; 		// Escolhe o que sera escrito no banco de reg
 	wire [31:0] write_on_bank; // Dado a ser escrito no banco
 	
-	wire equal;						// Seletor do resultado de alu_zero
-	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
-	wire movn;						// Sinal de controle p/ evitar escrita em movn
-	
 	wire signed_imm_extension;
+	
+	/* Conexoes da ALU */
+	// Entrada
+	wire [3:0] ALUoperation; 	// Determina operacao executada na ALU
+	wire [31:0] ALUoperand_b; 	// Segundo operando da ALU
+	wire equal;						// Seletor p/ condicao de branch (igual ou desigual)
+	
+	// Saida
+	wire [31:0] ALUresult; 		// Resultado da ALU
+	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
+	wire movn;						// Sinal de ctrl p/ permitir/evitar escrita em movn
 	
 	/* Conexoes da Unidade Multiplicadora */
 	wire [3:0] muu_op;			// Operacao a ser executada na MUU
@@ -223,6 +229,7 @@ module mips_uniciclo(
 		.A(reg_bank_data1), 
 		.B(ALUoperand_b), 
 		.operation(ALUoperation),
+		.shamt(instruction[10:6]),
 		.equal(equal),
 		.result(ALUresult),
 		.alu_zero(alu_zero),
