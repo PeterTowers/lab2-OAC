@@ -63,7 +63,7 @@ module alu (
 						alu_zero <= 1'b1;
 			end
 			
-			4'b0111: // SUBU				
+			4'b0111:			// SUBU				
 				result <= A - B;
 				
 			/* BGEZ/BGEZAL */
@@ -94,14 +94,17 @@ module alu (
 				else
 					result <= 0;
 			end
+			
+			4'b1011:			// SRL
+				result <= B >> shamt;
 				
-			4'b1100: // NOR
+			4'b1100:			// NOR
 				result <= ~(A | B);
 				
-			4'b1101: // XOR
+			4'b1101:			// XOR
 				result <= A ^ B;
 				
-			4'b1111: // LUI: B tem que ser os 16-bits superiores.
+			4'b1111:			// LUI: B tem que ser os 16-bits superiores.
 				result <= (B << 16);
 			
 			/* DEFAULT */
