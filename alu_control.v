@@ -47,6 +47,9 @@ module alu_control(
 					
 					6'b10_0101: // OR
 						operation <= 4'b0001;
+						
+					6'b00_0000:	// SLL
+						operation <= 4'b0101;
 
 					6'b10_1010: // SLT
 						operation <= 4'b1001;

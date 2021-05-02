@@ -1,7 +1,9 @@
 module alu (
 	input [31:0] A, B,			// Operandos
 	input [3:0] operation, 		// Operacao
+	input [4:0] shamt,			// No. de deslocamentos binarios (shift amount)
 	input equal,					// Seletor para condicao de branch (igual ou desigual)
+	
 	output reg [31:0] result,	// Resultado
 	output reg alu_zero,			// Sinal de controle para branch
 	output reg movn				// Sinal de controle para movn
@@ -21,7 +23,7 @@ module alu (
 			4'b0000:			// AND
 				result <= A & B;
 			
-			4'b0001: // OR
+			4'b0001:			// OR
 				result <= $signed(A) | $signed(B);
 				
 			4'b0010: 		// ADD
@@ -40,6 +42,9 @@ module alu (
 				else
 					movn <= 1'b0;	// Caso contrario, nao permite escrita no bco reg
 			end
+			
+			4'b0101:			// SLL
+				result <= B << shamt;
 			
 			/* SUB & BEQ/BNE */
 			4'b0110: begin
