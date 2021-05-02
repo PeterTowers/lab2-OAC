@@ -19,9 +19,11 @@ END;
 `timescale 1ps / 1ps  
 module mips_uniciclo_tb13;
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
-	wire[31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
-	wire[31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
-	wire alu_zero, movn;
+	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
+	wire [31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
+	wire [31:0] write_on_bank;
+	wire alu_zero, movn, muu_write_enable;
+	wire [1:0] write_enable, reg_write;
 	
 	mips_uniciclo test_unit(
 		.pc_clock(pc_clock), 
@@ -34,6 +36,7 @@ module mips_uniciclo_tb13;
 		.instruction_out(instruction),
 		.alu_zero_out(alu_zero),
 		.movn_out(movn),
+		.write_enable_out(write_enable),
 		.alu_operand_a(alu_operand_a),
 		.alu_operand_b(alu_operand_b),
 		.t0(t0),
@@ -46,7 +49,10 @@ module mips_uniciclo_tb13;
 		.t7(t7),
 		.hi(hi),
 		.lo(lo),
-		.memory_write(memory_write)
+		.memory_write(memory_write),
+		.reg_write_out(reg_write),
+		.muu_write_enable_out(muu_write_enable),
+		.write_on_bank_out(write_on_bank)
 	);
 	
 	parameter num_cycles = 100;
