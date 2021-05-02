@@ -105,10 +105,13 @@ module alu (
 				result <= A ^ B;
 				
 			5'b01110:			// SRA
-				result <= B >>> shamt;
+				result <= $signed(B) >>> shamt;
 				
 			5'b01111:			// LUI: B tem que ser os 16-bits superiores.
 				result <= (B << 16);
+				
+			5'b10000:			// SRAV
+				result <= $signed(B) >>> A[4:0];
 			
 			/* DEFAULT */
 			default:	// Modifiquei para resultar em um valor "absurdo" (em decimal: 3.735.928.559; bin: 1101 1110 1010 1101 1011 1110 1110 1111)
