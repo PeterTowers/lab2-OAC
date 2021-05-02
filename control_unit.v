@@ -94,33 +94,6 @@ module control_unit(
 							write_enable_reg <= 2'b01;	// Escreve no banco de reg
 						end
 					end
-					
-					/* TODO:
-					
-					6'b00_0000: begin	// SLL
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0011: begin	// SRA
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0111: begin	// SRAV
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0010: begin	// SRL
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					*/
 				endcase
 			end
 			
