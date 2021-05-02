@@ -83,6 +83,9 @@ module alu_control(
 				
 			4'b1001: // LUI
 				operation <= 4'b1111;
+				
+			4'b1010:	// SLTI
+				operation <= 4'b1001;
 
 			default:	// Nao deve ocorrer
 				operation <= 4'b0010;	// Soma

@@ -276,6 +276,19 @@ module control_unit(
 					signed_imm_extension <= 1'b0; //Imediato com extensao NAO sinalizada
 					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memoria
 				end
+				
+			6'b001010:	// SLTI
+				begin
+					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
+					pc_src = 2'b11;				// PC = PC+1
+					reg_write <= 2'b00;			// Escreve resultado da ALU no banco
+					opALU <= 4'b1001;				// Operacao LUI na ALU
+					write_enable_mem <= 1'b0;	// NAO escreve na memoria
+					origALU <= 1'd1;				// 2o operando da ALU eh o imediato
+					write_enable_reg <= 2'b01;	// Escreve no banco de registradores
+					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
+					mem_byte_mode <= 1'bx;		// Don't care sobre uso da memoria
+				end
 			
 			6'b101011:  //SW
 				begin
@@ -289,6 +302,7 @@ module control_unit(
 					signed_imm_extension <= 1'b1; //Imediato com extensao sinalizada
 					mem_byte_mode <= 1'b0;		// Memoria em word mode.
 				end
+				
 			6'b101000:  //SB
 				begin
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
@@ -302,8 +316,6 @@ module control_unit(
 					mem_byte_mode <= 1'b1;		// Memoria em byte mode.
 				end
 				
-			
-			
 			6'b001110:  //XORI 
 				begin 
 					reg_dst <= 2'd0;				// Apenas 2 registradores nesse caso
