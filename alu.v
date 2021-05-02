@@ -74,9 +74,17 @@ module alu (
 				end
 			end
 			
-			/* SLT */
+			/* SLT: Op. sinalizada (signed), sinal importa */
 			4'b1001: begin
 				if ($signed(A) < $signed(B))
+					result <= 1;
+				else
+					result <= 0;
+			end
+			
+			/* SLTU: Op. NAO sinalizada (unsigned), sinal n importa */
+			4'b1010: begin
+				if (A < B)
 					result <= 1;
 				else
 					result <= 0;

@@ -50,6 +50,9 @@ module alu_control(
 
 					6'b10_1010: // SLT
 						operation <= 4'b1001;
+						
+					6'b10_1011: // SLTU
+						operation <= 4'b1010;
 					
 					/* TODO:
 					6'b00_0011: // SRA
