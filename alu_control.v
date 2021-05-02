@@ -63,10 +63,10 @@ module alu_control(
 					
 					6'b00_0111: // SRAV
 						operation <= 4'b0000;
-					
-					6'b00_0010: // SRL
-						operation <= 4'b0000;
 					*/
+					6'b00_0010: // SRL
+						operation <= 4'b1011;
+					
 
 					6'b10_0010: // SUB
 						operation <= 4'b0110;
