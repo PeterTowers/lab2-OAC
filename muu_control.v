@@ -54,6 +54,12 @@ module muu_control(
 				operation <= 4'b0100;
 				muu_write_enable <= 1'b0;	// Desabilita escrita no banco
 			end
+			
+			6'b100001: begin	// CLO
+				operation <= 4'b0111;
+				muu_write_enable <= 1'b1;	// Desabilita escrita no banco
+			end
+
 
 			/* DEFAULT */
 			default:
