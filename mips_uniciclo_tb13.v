@@ -1,4 +1,4 @@
-/* Este deve ser o conteudo do UnicicloInst.mif para este testbench
+// Este deve ser o conteudo do UnicicloInst.mif para este testbench
 /* -----------------------------------------------------------------------------
 DEPTH = 128;
 WIDTH = 32;
