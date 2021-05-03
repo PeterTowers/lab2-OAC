@@ -76,7 +76,7 @@ module muu (
 				
 			4'b0111: begin	// CLO
 			
-				for(i = 31; i >0; i = i - 1) begin
+				for(i = 31; i >= 0; i = i - 1) begin
 					if (temp == 32) begin
 						if (rs[i] == 0) begin
 							temp = 31 - i;
