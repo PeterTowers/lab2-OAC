@@ -32,10 +32,6 @@ module mips_uniciclo(
 	wire [1:0] reg_write; 		// Escolhe o que sera escrito no banco de reg
 	wire [31:0] write_on_bank; // Dado a ser escrito no banco
 	
-	wire equal;						// Seletor do resultado de alu_zero
-	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
-	wire movn;						// Sinal de controle p/ evitar escrita em movn
-	
 	wire write_epc;				// Escreve no Registrador Error Program Counter (EPC)
 	wire cause_int;				// Especifica qual a causa do erro. 0 é OpCode Inválido, e 1 é Overflow
 	wire write_cause;				// Escreve no Registrador Cause
