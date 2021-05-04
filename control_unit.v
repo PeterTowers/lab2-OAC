@@ -85,13 +85,18 @@ module control_unit(
 						signed_imm_extension <= 1'bx; //Don't care imediato
 						mem_byte_mode <= 1'bx;		// Don't care sobre uso da memoria
 						
-						if (funct < 6'b100000) begin	// Operacoes na MUU
-							reg_write <= 2'b11;	// Escreve resultado da MUU no banco
+						if (funct == 6'b001011) begin	//MOVN
+							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
 							write_enable_reg <= 2'b10;	// Escrita no bco reg condicional
 						end
 						
-						else if (funct == 6'b001011) begin	//MOVN
+						else if (funct < 6'b001000) begin // Instrucoes de shift
 							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
+							write_enable_reg <= 2'b01;	// Escreve no banco de reg
+						end
+						
+						else if (funct < 6'b100000) begin	// Operacoes na MUU
+							reg_write <= 2'b11;	// Escreve resultado da MUU no banco
 							write_enable_reg <= 2'b10;	// Escrita no bco reg condicional
 						end
 							
@@ -106,8 +111,6 @@ module control_unit(
 							end
 						end
 					end
-					
-				
 				endcase
 			end
 			

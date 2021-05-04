@@ -1,5 +1,5 @@
 /* Este deve ser o conteudo do UnicicloInst.mif para este testbench
------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 DEPTH = 128;
 WIDTH = 32;
 ADDRESS_RADIX = HEX;
@@ -7,21 +7,22 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 3c010001; % 1: li $t0, 100000 %    
-00000001 : 342886a0; 
-00000002 : 71004821; % 2: clo $t1, $t0 %      
-00000003 : 3c01ffff; % 3: li $t2, 0xFFFF0000 %
-00000004 : 342a0000; 
-00000005 : 71405821; % 4: clo $t3, $t2 %      
-00000006 : 3c01c000; % 5: li $t4, 0xC0000000 %
-00000007 : 342c0000; 
-00000008 : 71806821; % 6: clo $t5, $t4 %      
+00000000 : 20080004; % 3: addi $t0, $zero, 4 %
+00000001 : 2009fff8; % 4: addi $t1, $zero, -8 %
+00000002 : 00085040; % 6: sll $t2, $t0, 1		# t2 = t0*2 = 8 %
+00000003 : 000a5882; % 7: srl $t3, $t2, 2		# t3 = (t1)/4 = 2 %
+00000004 : 000960c0; % 9: sll $t4, $t1, 3		# t4 = (-8)*8 = -64 %
+00000005 : 00096842; % 10: srl $t5, $t1, 1		# t5 = t1 >> 1 = 0x7fff_fffc %
+00000006 : 00087083; % 12: sra $t6, $t0, 2		# t6 = (t0)/4 = 1 %
+00000007 : 00097843; % 13: sra $t7, $t1, 1		# t7 = (t1)/2 = -4 %
+00000008 : 016d8007; % 15: srav $s0, $t5, $t3	# s0 = (t5)/4 = 0x1fff_ffff %
+00000009 : 01ac8807; % 16: srav $s1, $t4, $t5	# s1 = -1 %
 
 END;
-------------------------------------------------*/
+----------------------------------------------------------------------------- */
+
 `timescale 1ps / 1ps  
 module mips_uniciclo_tb15;
-
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
 	wire [31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
@@ -39,6 +40,8 @@ module mips_uniciclo_tb15;
 		.pc_out(pc),
 		.instruction_out(instruction),
 		.alu_zero_out(alu_zero),
+		.movn_out(movn),
+		.write_enable_out(write_enable),
 		.alu_operand_a(alu_operand_a),
 		.alu_operand_b(alu_operand_b),
 		.t0(t0),
@@ -57,63 +60,8 @@ module mips_uniciclo_tb15;
 		.write_on_bank_out(write_on_bank)
 	);
 	
-	
-	
 	parameter num_cycles = 100;
-		
-	task test_result_t;
-		input [31:0] expected_t0, expected_t1, expected_t2, expected_t3, expected_t4, expected_t5, expected_t6, expected_t7;	
-		begin						
-			// >>>>> $t0-$t7
-			test_result_unit(5'd8, expected_t0);
-			test_result_unit(5'd9, expected_t1);
-			test_result_unit(5'd10, expected_t2);
-			test_result_unit(5'd11, expected_t3);
-			test_result_unit(5'd12, expected_t4);
-			test_result_unit(5'd13, expected_t5);
-			test_result_unit(5'd14, expected_t6);
-			test_result_unit(5'd15, expected_t7);			
-		end
-	endtask
-	
-	
-	task test_result_s;
-		input [31:0] expected_s0, expected_s1, expected_s2, expected_s3, expected_s4, expected_s5, expected_s6, expected_s7;	
-		begin						
-			// >>>>> $a0-$a7
-			test_result_unit(5'd16, expected_s0);
-			test_result_unit(5'd17, expected_s1);
-			test_result_unit(5'd18, expected_s2);
-			test_result_unit(5'd19, expected_s3);
-			test_result_unit(5'd20, expected_s4);
-			test_result_unit(5'd21, expected_s5);
-			test_result_unit(5'd22, expected_s6);
-			test_result_unit(5'd23, expected_s7);			
-		end
-	endtask
-	
-	
-	task test_result_t_extra;
-		input [31:0] expected_t8, expected_t9;
-		begin						
-			// >>>>> $t8-$t9			
-			test_result_unit(5'd24, expected_t8);
-			test_result_unit(5'd25, expected_t9);			
-		end
-	endtask
-	
-	task test_result_unit;
-		input [4:0] index;
-		input [31:0] expected;
-		begin
-			if (expected == mips_uniciclo_tb15.test_unit.reg_bank.registers[index])
-				$display("$%0d: ok: %h", index, expected);
-			else
-				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb15.test_unit.reg_bank.registers[index]);
-		end
-	
-	endtask
-	
+
 	initial begin
 		pc_clock = 1'b0;
 		inst_clock = 1'b0;
@@ -148,31 +96,10 @@ module mips_uniciclo_tb15;
 						count_empty_instructions = 0;
 				end
 			end
-		
 			
-		
-		test_result_t(
-			32'h_0001_86a0,		//$t0
-			32'h_0,					//$t1
-			32'h_ffff_0000,		//$t2
-			32'h_0000_0010,		//$t3
-			32'h_c000_0000,		//$t4
-			32'h_0000_0002,		//$t5
-			32'h_0,				//$t6
-			32'h_0				//$t7
-			);
-		
-		
-//		test_result_s(
-//			32'h_fffdd200,			//$s0
-//			32'h_8000_1ee7,			//$s1
-//			32'h_0,			//$s2
-//			32'h_0,			//$s3
-//			32'h_0,			//$s4
-//			32'h_0, 			//$s5
-//			32'h_0,			//$s6
-//			32'h_0			//$s7
-//			);	
+		for(i = 0; i <=31; i = i + 1) begin
+			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb15.test_unit.reg_bank.registers[i]);
+		end
 	end
 	
 endmodule
