@@ -25,7 +25,9 @@ module muu (
 	
 	end
 	
-	always @(posedge clk) begin
+	always @(posedge clk) begin: update
+		integer temp, i;
+		temp = 32;
 		div_zero <= 0;
 		
 		case(operation)
@@ -71,6 +73,18 @@ module muu (
 			
 			4'b0110:	// MFLO
 				out <= lo;
+				
+			4'b0111: begin	// CLO
+			
+				for(i = 31; i >= 0; i = i - 1) begin
+					if (temp == 32) begin
+						if (rs[i] == 0) begin
+							temp = 31 - i;
+						end
+					end					
+				end			
+				out <= temp;
+			end
 			
 			default:	// NO OP
 				;

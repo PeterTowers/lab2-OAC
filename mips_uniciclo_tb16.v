@@ -1,6 +1,5 @@
-/* Esse deve ser o conteudo do UnicicloInst.mif para estes testbench
-
---------------------------------
+/* Este deve ser o conteudo do UnicicloInst.mif para este testbench
+-----------------------------------------------------------------------------
 DEPTH = 128;
 WIDTH = 32;
 ADDRESS_RADIX = HEX;
@@ -8,23 +7,17 @@ DATA_RADIX = HEX;
 CONTENT
 BEGIN
 
-00000000 : 210802e6; % 3: addi $t0, $t0, 742 % 
-00000001 : 31090529; % 5: andi $t1, $t0, 1321 %
-00000002 : 01285020; % 7: add $t2, $t1, $t0 %  
-00000003 : 01289023; % 9: subu $s2, $t1, $t0 % 
-00000004 : 01285826; % 11: xor $t3, $t1, $t0 % 
-00000005 : 01286022; % 13: sub $t4, $t1, $t0 % 
-00000006 : 01286824; % 15: and $t5, $t1, $t0 % 
-00000007 : 01287025; % 17: or $t6, $t1, $t0 %  
-00000008 : 01287827; % 19: nor $t7, $t1, $t0 % 
-00000009 : 01288026; % 21: xor $s0, $t1, $t0 % 
-0000000a : 01288821; % 23: addu $s1, $t1, $t0 %
+00000000 : 3c017fff; % 1: li  $t0, 2147483647 %
+00000001 : 3428ffff; 
+00000002 : 01084820; % 2: add $t1, $t0, $t0 %  
+00000003 : 240a0001; % 3: li $t2, 1 %
 
 END;
 ------------------------------------------------*/
 
+// Teste de Overflow
 `timescale 1ps / 1ps  
-module mips_uniciclo_tb2;
+module mips_uniciclo_tb16;
 
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
@@ -115,14 +108,13 @@ module mips_uniciclo_tb2;
 		input [4:0] index;
 		input [31:0] expected;
 		begin
-			if (expected == mips_uniciclo_tb2.test_unit.reg_bank.registers[index])
+			if (expected == mips_uniciclo_tb16.test_unit.reg_bank.registers[index])
 				$display("$%0d: ok: %h", index, expected);
 			else
-				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb2.test_unit.reg_bank.registers[index]);
+				$display("$%0d: INCORRECT. Expected 0x%h; got 0x%h", index, expected, mips_uniciclo_tb16.test_unit.reg_bank.registers[index]);
 		end
 	
 	endtask
-	
 	
 	initial begin
 		pc_clock = 1'b0;
@@ -166,33 +158,29 @@ module mips_uniciclo_tb2;
 			end
 		
 			
-		//for(i = 0; i <=31; i = i + 1) begin
-		//	$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb2.test_unit.reg_bank.registers[i]);
-		//end
-		//	
 		
 		test_result_t(
-			32'h_2e6,
-			32'h_20,
-			32'h_306,
-			32'h_2c6,
-			32'h_fffffd3a,
-			32'h_20, 
-			32'h_2e6,
-			32'h_fffffd19
+			32'h_7fff_ffff,		//$t0
+			32'h_0,					//$t1
+			32'h_0,		//$t2
+			32'h_0,		//$t3
+			32'h_0,		//$t4
+			32'h_0,		//$t5
+			32'h_0,				//$t6
+			32'h_0				//$t7
 			);
 		
-		test_result_s(
-			32'h_2c6,
-			32'h_306,
-			32'h_fffffd3a,
-			32'h_0,
-			32'h_0,
-			32'h_0, 
-			32'h_0,
-			32'h_0
-			);
 		
+//		test_result_s(
+//			32'h_fffdd200,			//$s0
+//			32'h_8000_1ee7,			//$s1
+//			32'h_0,			//$s2
+//			32'h_0,			//$s3
+//			32'h_0,			//$s4
+//			32'h_0, 			//$s5
+//			32'h_0,			//$s6
+//			32'h_0			//$s7
+//			);	
 	end
 	
 endmodule
