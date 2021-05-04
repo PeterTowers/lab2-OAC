@@ -61,7 +61,7 @@ module mips_uniciclo_tb16;
 	
 	
 	
-	parameter num_cycles = 100;
+	parameter num_cycles = 200;
 		
 	task test_result_t;
 		input [31:0] expected_t0, expected_t1, expected_t2, expected_t3, expected_t4, expected_t5, expected_t6, expected_t7;	
