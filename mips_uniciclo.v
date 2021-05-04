@@ -11,7 +11,9 @@ module mips_uniciclo(
 	// respectivos assigns e wires.
 	output [31:0] write_on_bank_out,
 	output [1:0] write_enable_out, reg_write_out,
-	output movn_out, muu_write_enable_out
+	output movn_out, muu_write_enable_out,
+	output reg [31:0] epc, // Tratamento de exceções
+	output reg cause
 	);
 	
 	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle, bco reg e TODO: Extensao de sinal DONE? -P
@@ -34,6 +36,11 @@ module mips_uniciclo(
 	wire equal;						// Seletor do resultado de alu_zero
 	wire alu_zero;					// Sinal de controle p/ tomada de decisao do branch
 	wire movn;						// Sinal de controle p/ evitar escrita em movn
+	
+	wire write_epc;				// Escreve no Registrador Error Program Counter (EPC)
+	wire cause_int;				// Especifica qual a causa do erro. 0 é OpCode Inválido, e 1 é Overflow
+	wire write_cause;				// Escreve no Registrador Cause
+	wire overflow;
 	
 	wire signed_imm_extension;
 	
@@ -92,7 +99,15 @@ module mips_uniciclo(
 	assign reg_write_out = reg_write;
 	assign muu_write_enable_out = muu_write_enable;
 	assign write_on_bank_out = write_on_bank;
+	
 /*----------------------------------------------------------------------------*/
+
+	initial begin
+		cause =  1'b0;
+		epc = 32'b0;
+	end
+
+	
 
 	// Modulo do PC
 	program_counter p_counter(
@@ -142,7 +157,11 @@ module mips_uniciclo(
 		.write_enable_reg(write_enable_reg),
 		.equal(equal),
 		.signed_imm_extension(signed_imm_extension),
-		.mem_byte_mode(memory_byte_filter)
+		.mem_byte_mode(memory_byte_filter),
+		.write_epc(write_epc),
+		.cause_int(cause_int),
+		.write_cause(write_cause),
+		.overflow(overflow)
 	);
 	
 	
@@ -226,7 +245,8 @@ module mips_uniciclo(
 		.equal(equal),
 		.result(ALUresult),
 		.alu_zero(alu_zero),
-		.movn(movn)
+		.movn(movn),
+		.overflow(overflow)
 	);
 	
 	// Unidade Multiplicadora - MUU
@@ -247,6 +267,16 @@ module mips_uniciclo(
 		.operation(muu_op),
 		.muu_write_enable(muu_write_enable)
 	);
+	
+	
+	// Tratamento de exceção
+	always @(posedge reg_clock) begin
+		if (write_epc == 1'b1)
+			epc = pc;
+		
+		if (write_cause == 1'b1)
+			cause = cause_int;
+	end
 	
 	
 endmodule

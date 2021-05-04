@@ -1,6 +1,7 @@
 module control_unit(
 	input[0:5] opcode, funct,			// Campos "opcode" e "funct"
 	input[4:0] rt,							// Registrador rt p/ instrucoes BGEZ/BGEZAL
+	input overflow,
 	
 	output reg [1:0] pc_src,			// Determina a escolha do proximo PC
 	output reg [1:0] reg_dst, 			// Escolhe o reg em que sera salvo P/ instrucao
@@ -13,7 +14,10 @@ module control_unit(
 	output reg [1:0] write_enable_reg,	// Habilita escrita no banco de registradores
 	output reg equal,						// Condicao de escolha entre resultado BEQ/BNE
 	output reg signed_imm_extension,	// Decide se a extensao de sinal do imediato sera sinalizada ou nao
-	output reg mem_byte_mode			// Decide se a leitura e escrita na memoria vao ser em Byte (1), ou Word (0)
+	output reg mem_byte_mode,			// Decide se a leitura e escrita na memoria vao ser em Byte (1), ou Word (0)
+	output reg write_epc,				// Escreve no Registrador Error Program Counter (EPC)
+	output reg cause_int,				// Especifica qual a causa do erro. 0 é OpCode Inválido, e 1 é Overflow
+	output reg write_cause				// Escreve no Registrador Cause qual foi o erro.
 	);
 
 	// Definicao das condicoes iniciais
@@ -27,11 +31,18 @@ module control_unit(
 		write_enable_reg = 2'b00;
 		equal = 1'b1;
 		signed_imm_extension = 1'b1;
+		mem_byte_mode = 1'b0;
+		write_epc = 1'b0;
+		cause_int = 1'b0;
+		write_cause = 1'b0;
 	end	
 	
 	always @(*) begin
 		equal <= 1'bx;
 		reg_write <= 2'bxx;
+		write_epc <= 1'b0;
+		cause_int <= 1'bx;
+		write_cause <= 1'b0;
 		
 		case(opcode)
 /*----------------------------------------------------------------------------*/
@@ -87,35 +98,16 @@ module control_unit(
 						else begin						// Operacoes na ALU
 							reg_write <= 2'b00;		// Escreve resultado da ALU no banco
 							write_enable_reg <= 2'b01;	// Escreve no banco de reg
+							if (overflow == 1'b1) begin // Anota o Overflow nos registradores EPC e cause e suspende a execução do programa.
+								cause_int <= 1'b1;
+								write_epc <= 1'b1;
+								write_cause <= 1'b1;
+								write_enable_reg <= 1'b0;
+							end
 						end
 					end
 					
-					/* TODO:
-					
-					6'b00_0000: begin	// SLL
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0011: begin	// SRA
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0111: begin	// SRAV
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					
-					6'b00_0010: begin	// SRL
-						pc_src = 2'b11;				// PC = PC+1
-						opALU <= 4'b0;					// Operacao ??? na ALU
-						write_enable_reg <= 1'b1;	// Escreve no banco de reg
-					end
-					*/
+				
 				endcase
 			end
 			

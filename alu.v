@@ -4,7 +4,8 @@ module alu (
 	input equal,					// Seletor para condicao de branch (igual ou desigual)
 	output reg [31:0] result,	// Resultado
 	output reg alu_zero,			// Sinal de controle para branch
-	output reg movn				// Sinal de controle para movn
+	output reg movn,				// Sinal de controle para movn
+	output reg overflow			// Informa Overflow
 	);
 	
 	initial begin
@@ -12,21 +13,31 @@ module alu (
 		movn = 1'b0;
 	end
 	
-	always @(*) begin
+	always @(*) begin : update
+		integer temp;
+		
 		alu_zero <= 1'b0;
 		movn <= 1'b0;
 		result <= 32'hxxxxxxxx;
+		overflow <= 1'b0;
 		
 		case(operation)
 			4'b0000:			// AND
 				result <= A & B;
 			
-			4'b0001: // OR
+			4'b0001: // OR				
 				result <= $signed(A) | $signed(B);
 				
-			4'b0010: 		// ADD
-				// TODO: Testar overflow
-				result <= $signed(A) + $signed(B);
+			4'b0010: begin	// ADD
+				temp = $signed(A) + $signed(B);
+				if (A[31] == 1'b1 && B[31] ==1'b1 && temp[31] != 1'b1) // Negativo + Negativo = Positivo
+					overflow <= 1'b1;
+				else if (A[31] == 1'b0 && B[31] ==1'b0 && temp[31] != 1'b0) // Positivo + Positivo = Negativo
+					overflow <= 1'b1;
+				else				
+					result <= temp;
+				
+			end
 				
 			4'b0011: 		// ADDU
 				result <= A + B;
@@ -43,8 +54,17 @@ module alu (
 			
 			/* SUB & BEQ/BNE */
 			4'b0110: begin
-				// TODO: Testar overflow
-				result <= $signed(A) - $signed(B);
+				temp = $signed(A) - $signed(B);
+				
+				if (A[31] == 1'b0 && B[31] == 1'b1 && temp[31] == 1'b1) begin // Positivo - Negativo = Negativo
+					overflow <= 1'b1;
+					$display("Overflow A");
+				end else if (A[31] == 1'b0 && B[31] == 1'b1 && temp[31] == 1'b0) begin // Negativo - Positivo = Positivo
+					overflow <= 1'b1;
+					$display("Overflow B");				
+				end else				
+					result <= temp;
+				
 				
 				if ($signed(A) == $signed(B))	// Para instrucao BEQ, result == 0 eh igualdade
 					if (equal)	
