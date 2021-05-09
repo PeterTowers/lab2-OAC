@@ -9,19 +9,17 @@ module mips_uniciclo(
 	
 	// Saidas p/ debugging; podem ser apagadas de forma segura junto com os
 	// respectivos assigns e wires.
-	output [31:0] write_on_bank_out,
 	output [1:0] write_enable_out, reg_write_out,
-	output movn_out, muu_write_enable_out,
 	output reg [31:0] epc, // Tratamento de exceções
 	output reg cause
 	);
-	
-	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle, bco reg e TODO: Extensao de sinal DONE? -P
-	
-	wire [1:0] reg_dst; 			// Gerado pela unidade de controle, decide o registrador p/ escrita.
-	wire [4:0] reg_dst_write;	// Registrador selecionado para escrita
+/*----------------------------------------------------------------------------*/
+	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle,
+										// bco reg e extensao de sinal
+	wire [1:0] reg_dst; 			// Gerado pela un. de controle, decide reg p/ escrita
+	wire [4:0] reg_dst_write;	// Seleciona registrador para escrita
 	wire origALU; 					// Fio para decidir se 2o op da ALU eh imm ou reg
-	wire [3:0] opALU;				// Gerado pela unidade de controle, auxilia escolha de op na ALU
+	wire [3:0] opALU;				// Gerado pela un. de controle, auxilia escolha de op na ALU
 	
 	wire [31:0] reg_bank_data1, reg_bank_data2; // Valores lidos do banco de reg
 	
@@ -33,7 +31,7 @@ module mips_uniciclo(
 	wire [31:0] write_on_bank; // Dado a ser escrito no banco
 	
 	wire write_epc;				// Escreve no Registrador Error Program Counter (EPC)
-	wire cause_int;				// Especifica qual a causa do erro. 0 é OpCode Inválido, e 1 é Overflow
+	wire cause_int;				// Especifica causa do erro. 0 eh OpCode invalido, 1 eh Overflow
 	wire write_cause;				// Escreve no Registrador Cause
 	wire overflow;
 	
@@ -70,9 +68,6 @@ module mips_uniciclo(
 	wire [31:0] t0_wire, t1_wire, t2_wire, t3_wire, t4_wire, t5_wire, t6_wire;
 	wire [31:0] t7_wire, hi_wire, lo_wire;
 	
-	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
-	// A ideia é colocar wires aqui p/ fazer debug, caso necessario
-	
 /*----------------------------------------------------------------------------*/
 	// Saidas p/ apresentacao e debugging
 	assign ALUresult_out = ALUresult;		// Resultado da ALU
@@ -101,10 +96,7 @@ module mips_uniciclo(
 	
 	/* Conexoes de debugging (podem ser apagadas CUIDADOSAMENTE p/ apresentacao) */
 	assign write_enable_out = write_enable_reg;
-	assign movn_out = movn;
 	assign reg_write_out = reg_write;
-	assign muu_write_enable_out = muu_write_enable;
-	assign write_on_bank_out = write_on_bank;
 	
 /*----------------------------------------------------------------------------*/
 
