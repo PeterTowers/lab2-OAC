@@ -1,28 +1,26 @@
-/* Este deve ser o conteudo do UnicicloInst.mif para este testbench
---------------------------------------------------------------------------------
-DEPTH = 128;
-WIDTH = 32;
-ADDRESS_RADIX = HEX;
-DATA_RADIX = HEX;
-CONTENT
-BEGIN
-
-00000000 : 20080004; % 3: addi $t0, $zero, 4 %
-00000001 : 2009fff8; % 4: addi $t1, $zero, -8 %
-00000002 : 00085040; % 6: sll $t2, $t0, 1		# t2 = t0*2 = 8 %
-00000003 : 000a5882; % 7: srl $t3, $t2, 2		# t3 = (t1)/4 = 2 %
-00000004 : 000960c0; % 9: sll $t4, $t1, 3		# t4 = (-8)*8 = -64 %
-00000005 : 00096842; % 10: srl $t5, $t1, 1		# t5 = t1 >> 1 = 0x7fff_fffc %
-00000006 : 00087083; % 12: sra $t6, $t0, 2		# t6 = (t0)/4 = 1 %
-00000007 : 00097843; % 13: sra $t7, $t1, 1		# t7 = (t1)/2 = -4 %
-00000008 : 016d8007; % 15: srav $s0, $t5, $t3	# s0 = (t5)/4 = 0x1fff_ffff %
-00000009 : 01ac8807; % 16: srav $s1, $t4, $t5	# s1 = -1 %
-
-END;
------------------------------------------------------------------------------ */
+/*------------------------------------------------------------------------------
+ mips_uniciclo_tb00: Test bench p/ verificar a execucao do codigo no
+ * processador MIPS uniciclo desenvolvido neste trabalho.
+ *
+ * Para executar um codigo escrito em assembly MIPS, ele deve estar
+ * pre-compilado e suas areas .text e .data devem ser copiadas para os arquivos
+ * 'UnicicloInst.mif' (relativo a parte .text do codigo em assembly MIPS) e
+ * 'UnicicloData.mif' (relativo a parte .data do codigo em assembly).
+ * 
+ * Em seguida, assegure-se que a entidade top-level esta definida como sendo o
+ * arquivo 'mips_uniciclo.v' e este arquivo (mips_uniciclo_tb00.v) esta definido
+ * como o test bench em Assignments > Settings... > EDA Tool Settings >
+ * > Simulation > NativeLink Settings > "Compile test bench:"
+ *
+ * Caso tudo esteja definido corretamente, compile o projeto e utilize o botao
+ * RTL Simulation para executar a simulacao. O valor final de todos os 32
+ * registradores sera exibido em forma de texto na tela aberta do ModelSim, ao
+ * passo que demais informacoes como o PC, a intrucao executada, operandos da
+ * ALU, etc. serao mostrados sequencialmente no grafico da simulacao.
+------------------------------------------------------------------------------*/
 
 `timescale 1ps / 1ps  
-module mips_uniciclo_tb15;
+module mips_uniciclo_tb00;
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
 	wire [31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
@@ -95,7 +93,7 @@ module mips_uniciclo_tb15;
 			end
 			
 		for(i = 0; i <=31; i = i + 1) begin
-			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb15.test_unit.reg_bank.registers[i]);
+			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb00.test_unit.reg_bank.registers[i]);
 		end
 	end
 	
