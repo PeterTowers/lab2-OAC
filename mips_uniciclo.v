@@ -1,3 +1,12 @@
+/*------------------------------------------------------------------------------
+ * mips_uniciclo: entidade top level do projeto. Instancia os modulos e realiza
+ * as conexoes entre eles de acordo com os diagramas apresentados em aula e com
+ * modificacoes feitas conforme necessario.
+ *
+ * Assegure-se de que este arquivo esta definido como a entidade top-level no
+ * Quartus para executar as simulacoes. Para mais intrucoes sobre como executar
+ * uma simulacao, siga as instrucoes no arquivo 'mips_uniciclo_tb00.v'.
+------------------------------------------------------------------------------*/
 `timescale 1ps / 1ps  
 module mips_uniciclo(
 	input pc_clock, inst_clock, data_clock, reg_clock, muu_clock,
@@ -13,7 +22,7 @@ module mips_uniciclo(
 	output reg [31:0] epc, // Tratamento de exceções
 	output reg cause
 	);
-/*----------------------------------------------------------------------------*/
+
 	wire[31:0] instruction; 	// Saida da mem. de instrucoes. Alimenta controle,
 										// bco reg e extensao de sinal
 	wire [1:0] reg_dst; 			// Gerado pela un. de controle, decide reg p/ escrita
