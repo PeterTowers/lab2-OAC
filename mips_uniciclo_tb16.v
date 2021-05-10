@@ -61,7 +61,7 @@ module mips_uniciclo_tb16;
 	
 	
 	
-	parameter num_cycles = 100;
+	parameter num_cycles = 200;
 		
 	task test_result_t;
 		input [31:0] expected_t0, expected_t1, expected_t2, expected_t3, expected_t4, expected_t5, expected_t6, expected_t7;	
@@ -157,19 +157,23 @@ module mips_uniciclo_tb16;
 				end
 			end
 		
+		for(i = 0; i <=31; i = i + 1) begin
+			$display("Register[%0d] = 0x%h", i , mips_uniciclo_tb16.test_unit.reg_bank.registers[i]);
+		end
+			
 			
 		
-		test_result_t(
-			32'h_7fff_ffff,		//$t0
-			32'h_0,					//$t1
-			32'h_0,		//$t2
-			32'h_0,		//$t3
-			32'h_0,		//$t4
-			32'h_0,		//$t5
-			32'h_0,				//$t6
-			32'h_0				//$t7
-			);
-		
+//		test_result_t(
+//			32'h_7fff_ffff,		//$t0
+//			32'h_0,					//$t1
+//			32'h_0,		//$t2
+//			32'h_0,		//$t3
+//			32'h_0,		//$t4
+//			32'h_0,		//$t5
+//			32'h_0,				//$t6
+//			32'h_0				//$t7
+//			);
+//		
 		
 //		test_result_s(
 //			32'h_fffdd200,			//$s0
