@@ -30,7 +30,7 @@ module mips_uniciclo(
 	
 	output alu_zero_out,
 	
-	output reg [31:0] epc, // Tratamento de exceções
+	output reg [31:0] epc, // Tratamento de excecoes
 	output reg cause
 	);
 
@@ -192,7 +192,7 @@ module mips_uniciclo(
 		.q(instruction)
 	);
 	
-	// Esse módulo serve para ativar o modo Byte do SB e LB, na hora de ESCREVER na memória de dados.
+	// Esse modulo serve para ativar o modo Byte do SB e LB, na hora de ESCREVER na memoria de dados.
 	byte_filter mem_byte_filter_in(
 		.in (reg_bank_data2),
 		.filter_enable(memory_byte_filter),
@@ -208,7 +208,7 @@ module mips_uniciclo(
 		.q(mem_data)
 	);
 	
-	// Esse módulo serve para ativar o modo Byte do SB e LB, na hora de LER da memória de dados.
+	// Esse modulo serve para ativar o modo Byte do SB e LB, na hora de LER da memoria de dados.
 	byte_filter mem_byte_filter_out(
 		.in (mem_data),
 		.filter_enable(memory_byte_filter),
@@ -288,7 +288,7 @@ module mips_uniciclo(
 	);
 	
 	
-	// Tratamento de exceção
+	// Tratamento de excecao
 	always @(posedge reg_clock) begin
 		if (write_epc == 1'b1)
 			epc = pc;
