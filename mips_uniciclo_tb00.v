@@ -24,8 +24,7 @@ module mips_uniciclo_tb00;
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
 	wire [31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write;
-	wire [31:0] write_on_bank;
-	wire alu_zero, movn, muu_write_enable;
+	wire alu_zero;
 	wire [1:0] write_enable, reg_write;
 	
 	mips_uniciclo test_unit(
@@ -52,7 +51,7 @@ module mips_uniciclo_tb00;
 		.hi(hi),
 		.lo(lo),
 		.memory_write(memory_write),
-		.reg_write_out(reg_write),
+		.reg_write_out(reg_write)
 	);
 	
 	parameter num_cycles = 100;
