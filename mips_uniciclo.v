@@ -1,11 +1,22 @@
 /*------------------------------------------------------------------------------
- * mips_uniciclo: entidade top level do projeto. Instancia os modulos e realiza
+ * Universidade de Brasilia
+ *
+ * Organizacao e Arquitetura de Computadores
+ * Turma B
+ *
+ * Alunos: Pedro Lucas Silva Haga Torres   16/0141575
+ *         Sergio Alonso da Costa Junior   19/0116889
+ *         Vinicius Monteiro Drumond Bowen 18/0079239
+ *
+ * Laboratorio 02
+ *
+ * mips_uniciclo: entidade top-level do projeto. Instancia os modulos e realiza
  * as conexoes entre eles de acordo com os diagramas apresentados em aula e com
  * modificacoes feitas conforme necessario.
  *
  * Assegure-se de que este arquivo esta definido como a entidade top-level no
- * Quartus para executar as simulacoes. Para mais intrucoes sobre como executar
- * uma simulacao, siga as instrucoes no arquivo 'mips_uniciclo_tb00.v'.
+ * Quartus para executar as simulacoes. Para maiores informacoes sobre como
+ * executar uma simulacao, siga as instrucoes no arquivo 'mips_uniciclo_tb00.v'.
 ------------------------------------------------------------------------------*/
 `timescale 1ps / 1ps  
 module mips_uniciclo(
@@ -14,11 +25,11 @@ module mips_uniciclo(
 	output [31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a,
 	output [31:0] alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo,
 	output [31:0] memory_write,
+	
+	output [1:0] write_enable_out, reg_write_out,
+	
 	output alu_zero_out,
 	
-	// Saidas p/ debugging; podem ser apagadas de forma segura junto com os
-	// respectivos assigns e wires.
-	output [1:0] write_enable_out, reg_write_out,
 	output reg [31:0] epc, // Tratamento de exceções
 	output reg cause
 	);
