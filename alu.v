@@ -134,9 +134,8 @@ module alu (
 				result <= $signed(B) >>> A[4:0];
 			
 			/* DEFAULT */
-			default:	// Modifiquei para resultar em um valor "absurdo" (em decimal: 3.735.928.559; bin: 1101 1110 1010 1101 1011 1110 1110 1111)
-				result <= 32'hdeadbeef;	// Assim a gente sabe que deu ruim nesse ponto
-			// TODO: Definir default como NO OP.
+			default:
+				;	// NO OP
 		endcase
 		
 		
