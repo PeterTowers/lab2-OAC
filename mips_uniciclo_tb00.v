@@ -24,6 +24,7 @@ module mips_uniciclo_tb00;
 	reg pc_clock, inst_clock, data_clock, reg_clock, muu_clock;
 	wire [31:0] pc, instruction, alu_operand_a, alu_operand_b, ALUresult;
 	wire [31:0] t0, t1, t2, t3, t4, t5, t6, t7, hi, lo, memory_write, epc;
+	wire [31:0] s0, s1, s2, s3, s4, s5, s6, s7;
 	wire alu_zero, cause;
 	wire [1:0] write_enable, reg_write;
 	
@@ -48,6 +49,14 @@ module mips_uniciclo_tb00;
 		.t5(t5),
 		.t6(t6),
 		.t7(t7),
+		.s0(s0),
+		.s1(s1),
+		.s2(s2),
+		.s3(s3),
+		.s4(s4),
+		.s5(s5),
+		.s6(s6),
+		.s7(s7),
 		.hi(hi),
 		.lo(lo),
 		.memory_write(memory_write),

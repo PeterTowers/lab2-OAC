@@ -5,12 +5,16 @@ module register_bank(
 	input muu_write_enable, movn,
 	input [31:0] write_data,
 	output reg[31:0] read_data1, read_data2,
-	output[31:0] t0, t1, t2, t3, t4, t5, t6, t7 //Expoe os valores dos registradores t para apresentar debugar o código mais facilmente.
+/*----------------------------------------------------------------------------*/
+	// Saida dos valores dos registradores t e s para apresentacao e debuggging
+	output [31:0] t0, t1, t2, t3, t4, t5, t6, t7,
+	output [31:0] s0, s1, s2, s3, s4, s5, s6, s7
 	);
 	
 	// Nossos registradores sao de 32 bits e temos 32 deles. Nessa ordem.
 	reg[31:0] registers[31:0];
 	
+	// Registradores t e s para apresentacao e debuggging
 	assign t0 = registers[8];
 	assign t1 = registers[9];
 	assign t2 = registers[10];
@@ -19,7 +23,14 @@ module register_bank(
 	assign t5 = registers[13];
 	assign t6 = registers[14];
 	assign t7 = registers[15];
-	
+	assign s0 = registers[16];
+	assign s1 = registers[17];
+	assign s2 = registers[18];
+	assign s3 = registers[19];
+	assign s4 = registers[20];
+	assign s5 = registers[21];
+	assign s6 = registers[22];
+	assign s7 = registers[23];
 	
 	integer i;
 	initial begin

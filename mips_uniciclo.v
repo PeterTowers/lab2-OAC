@@ -6,7 +6,6 @@
  *
  * Alunos: Pedro Lucas Silva Haga Torres   16/0141575
  *         Sergio Alonso da Costa Junior   19/0116889
- *         Vinicius Monteiro Drumond Bowen 18/0079239
  *
  * Laboratorio 02
  *
@@ -24,6 +23,7 @@ module mips_uniciclo(
 	
 	output [31:0] ALUresult_out, pc_out, instruction_out, alu_operand_a,
 	output [31:0] alu_operand_b, t0, t1, t2, t3, t4, t5, t6, t7, hi, lo,
+	output [31:0] s0, s1, s2, s3, s4, s5, s6, s7,
 	output [31:0] memory_write,
 	
 	output [1:0] write_enable_out, reg_write_out,
@@ -84,10 +84,10 @@ module mips_uniciclo(
 	wire [31:0] memory_out;		// Fio do que foi lido da memoria. Filtrado como Word ou Byte.
 	wire memory_byte_filter;
 	
-	/* Expondo os registradores para facilitar na apresentacao e no Debug. */
+	/* Expondo os registradores para facilitar na apresentacao e no debuggging */
 	wire [31:0] t0_wire, t1_wire, t2_wire, t3_wire, t4_wire, t5_wire, t6_wire;
-	wire [31:0] t7_wire, hi_wire, lo_wire;
-	
+	wire [31:0] t7_wire, hi_wire, lo_wire, s0_wire, s1_wire, s2_wire, s3_wire;
+	wire [31:0] s4_wire, s5_wire, s6_wire, s7_wire;
 /*----------------------------------------------------------------------------*/
 	// Saidas p/ apresentacao e debugging
 	assign ALUresult_out = ALUresult;		// Resultado da ALU
@@ -106,6 +106,16 @@ module mips_uniciclo(
 	assign t5 = t5_wire;
 	assign t6 = t6_wire;
 	assign t7 = t7_wire;
+	
+	// Saida dos registradores T
+	assign s0 = s0_wire;
+	assign s1 = s1_wire;
+	assign s2 = s2_wire;
+	assign s3 = s3_wire;
+	assign s4 = s4_wire;
+	assign s5 = s5_wire;
+	assign s6 = s6_wire;
+	assign s7 = s7_wire;
 	
 	// Registradores internos da MUU
 	assign hi = hi_wire;
@@ -158,7 +168,15 @@ module mips_uniciclo(
 		.t4(t4_wire),
 		.t5(t5_wire),
 		.t6(t6_wire),
-		.t7(t7_wire)
+		.t7(t7_wire),
+		.s0(s0_wire),
+		.s1(s1_wire),
+		.s2(s2_wire),
+		.s3(s3_wire),
+		.s4(s4_wire),
+		.s5(s5_wire),
+		.s6(s6_wire),
+		.s7(s7_wire)
 	);
 	
 	//Unidade de Controle
